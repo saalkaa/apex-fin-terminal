@@ -1,190 +1,642 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apex Terminal Mini App</title>
-    <!-- Telegram WebApp uchun eng rasmiy kutubxona -->
-    <script src="https://telegram.org"></script>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0d1117; /* To'q qora premium fon */
-            color: #ffffff;
-            margin: 0;
-            padding: 15px;
-            user-select: none;
-        }
-        .header {
-            text-align: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #21262d;
-        }
-        .header h1 {
-            font-size: 22px;
-            color: #58a6ff; /* Chiroyli ko'k rang */
-            margin: 0;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        .subtitle {
-            color: #8b949e;
-            font-size: 12px;
-            margin: 5px 0 0 0;
-            text-transform: uppercase;
-        }
-        .market-list {
-            margin-top: 20px;
-        }
-        .stock-item {
-            background-color: #161b22; /* Minimalistik bloklar */
-            border: 1px solid #30363d;
-            border-radius: 12px;
-            padding: 14px 16px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: transform 0.2s;
-        }
-        .stock-item:active {
-            transform: scale(0.98);
-        }
-        .stock-info {
-            display: flex;
-            flex-direction: column;
-        }
-        .stock-name {
-            font-weight: 600;
-            font-size: 15px;
-            color: #f0f6fc;
-        }
-        .stock-ticker {
-            font-size: 11px;
-            color: #8b949e;
-            margin-top: 2px;
-            background: #21262d;
-            padding: 2px 6px;
-            border-radius: 4px;
-            width: fit-content;
-        }
-        .stock-meta {
-            text-align: right;
-        }
-        .stock-price {
-            font-size: 16px;
-            font-weight: 700;
-            color: #39d353; /* Yashil muvaffaqiyat rangi */
-        }
-        .stock-status {
-            font-size: 10px;
-            color: #8b949e;
-            margin-top: 3px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Apex Fin Terminal</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    min-height: 100vh;
+    padding-bottom: 80px;
+    overflow-x: hidden;
+  }
+  .header {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid #1f1f1f;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .logo {
+    font-size: 18px;
+    font-weight: 700;
+    color: #00ff88;
+    letter-spacing: 1px;
+  }
+  .logo span { color: #fff; }
+  .market-status {
+    background: #141414;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid #1f1f1f;
+  }
+  .market-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: #666;
+    box-shadow: 0 0 12px #666;
+    flex-shrink: 0;
+  }
+  .market-dot.open { background: #00ff88; box-shadow: 0 0 12px #00ff88; animation: pulse 1.5s infinite; }
+  .market-dot.closed { background: #ff3b3b; box-shadow: 0 0 12px #ff3b3b; }
+  .market-dot.pending { background: #ffbb00; box-shadow: 0 0 12px #ffbb00; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.2); }
+  }
+  .market-info { flex: 1; }
+  .market-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .market-sub { font-size: 11px; color: #888; }
+  .market-timer {
+    font-size: 18px;
+    font-weight: 700;
+    color: #00ff88;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+  }
+  .market-timer.closed { color: #ff3b3b; }
+  .market-timer.pending { color: #ffbb00; }
+  .search-box {
+    padding: 16px 20px 8px;
+    position: relative;
+  }
+  .search-box input {
+    width: 100%;
+    background: #141414;
+    border: 1px solid #1f1f1f;
+    border-radius: 12px;
+    padding: 14px 16px 14px 44px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-box input:focus { border-color: #00ff88; }
+  .search-box input::placeholder { color: #555; }
+  .search-icon {
+    position: absolute;
+    left: 34px; top: 50%;
+    transform: translateY(-25%);
+    font-size: 16px;
+    color: #666;
+    pointer-events: none;
+  }
+  .filters {
+    padding: 8px 20px 16px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .filter-btn {
+    background: #141414;
+    border: 1px solid #1f1f1f;
+    border-radius: 20px;
+    padding: 8px 16px;
+    color: #888;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn.active {
+    background: #00ff88;
+    color: #000;
+    border-color: #00ff88;
+  }
+  .stocks-list { padding: 0 16px; }
+  .section-title {
+    font-size: 13px;
+    color: #888;
+    font-weight: 600;
+    padding: 8px 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .stock-card {
+    background: linear-gradient(135deg, #141414 0%, #181818 100%);
+    border: 1px solid #1f1f1f;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .stock-card:active { transform: scale(0.98); border-color: #00ff88; }
+  .stock-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: #333;
+  }
+  .stock-card.halal::before { background: #00ff88; }
+  .stock-card.haram::before { background: #ff3b3b; }
+  .stock-card.ribo::before { background: #ffbb00; }
+  .stock-card.shubhali::before { background: #ff8800; }
+  .stock-row1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .stock-name { font-size: 15px; font-weight: 600; }
+  .stock-symbol {
+    font-size: 11px;
+    color: #666;
+    background: #1f1f1f;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-left: 8px;
+  }
+  .stock-row2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .stock-price { font-size: 17px; font-weight: 700; color: #fff; }
+  .stock-change { font-size: 14px; font-weight: 600; }
+  .stock-change.up { color: #00ff88; }
+  .stock-change.down { color: #ff3b3b; }
+  .stock-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #1f1f1f;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .tag.halal { background: rgba(0,255,136,0.15); color: #00ff88; }
+  .tag.haram { background: rgba(255,59,59,0.15); color: #ff3b3b; }
+  .tag.ribo { background: rgba(255,187,0,0.15); color: #ffbb00; }
+  .tag.shubhali { background: rgba(255,136,0,0.15); color: #ff8800; }
+  .tag.advice-buy { background: rgba(0,255,136,0.2); color: #00ff88; }
+  .tag.advice-wait { background: rgba(255,187,0,0.2); color: #ffbb00; }
+  .tag.advice-sell { background: rgba(255,59,59,0.2); color: #ff3b3b; }
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(15,15,15,0.98);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid #1f1f1f;
+    display: flex;
+    padding: 8px 0 12px;
+    z-index: 100;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #666;
+  }
+  .nav-item.active { color: #00ff88; }
+  .nav-icon { font-size: 20px; }
+  .nav-label { font-size: 10px; font-weight: 600; }
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: #0a0a0a;
+    z-index: 200;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    padding-bottom: 30px;
+  }
+  .modal.open { transform: translateY(0); }
+  .modal-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #1f1f1f;
+    position: sticky;
+    top: 0;
+    background: #0a0a0a;
+    z-index: 10;
+  }
+  .modal-back {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: #141414;
+    border: 1px solid #1f1f1f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .modal-title { font-size: 15px; font-weight: 600; flex: 1; }
+  .modal-body { padding: 20px; }
+  .detail-price {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .detail-price-num {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .detail-price-chg { font-size: 15px; font-weight: 600; }
+  .detail-price-chg.up { color: #00ff88; }
+  .detail-price-chg.down { color: #ff3b3b; }
+  .detail-rows {
+    background: #141414;
+    border: 1px solid #1f1f1f;
+    border-radius: 10px;
+    padding: 4px 16px;
+    margin: 16px 0;
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #1f1f1f;
+    font-size: 13px;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row-label { color: #888; }
+  .detail-row-value { font-weight: 600; }
+  .progress-bar {
+    height: 6px;
+    background: #1f1f1f;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88, #00cc6a);
+    border-radius: 3px;
+    transition: width 0.5s;
+  }
+  .action-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 16px;
+    background: #00ff88;
+    color: #000;
+    transition: all 0.2s;
+  }
+  .action-btn:active { transform: scale(0.98); }
+  .action-btn.disabled {
+    background: #1f1f1f;
+    color: #666;
+    cursor: not-allowed;
+  }
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 13px;
+  }
+</style>
 </head>
 <body>
 
-    <!-- Sarlavha qismi -->
-    <div class="header">
-        <h1>📊 Apex Terminal Demo</h1>
-        <div class="subtitle">Toshkent Sanoat Fond Bozori</div>
+<div class="header">
+  <div class="header-top">
+    <div class="logo">📊 APEX<span> FIN</span></div>
+  </div>
+  <div class="market-status">
+    <div class="market-dot" id="marketDot"></div>
+    <div class="market-info">
+      <div class="market-title" id="marketTitle">UZSE Bozori</div>
+      <div class="market-sub" id="marketSub">Yuklanmoqda...</div>
+    </div>
+    <div class="market-timer" id="marketTimer">--:--:--</div>
+  </div>
+</div>
+
+<div class="search-box">
+  <span class="search-icon">🔍</span>
+  <input type="text" id="searchInput" placeholder="Aksiya qidirish (masalan: AAPL)">
+</div>
+
+<div class="filters" id="filters">
+  <div class="filter-btn active" data-filter="all">Hammasi</div>
+  <div class="filter-btn" data-filter="halal">✅ Halol</div>
+  <div class="filter-btn" data-filter="buy">🎯 Olish</div>
+  <div class="filter-btn" data-filter="low">🟢 Past xavf</div>
+</div>
+
+<div class="stocks-list">
+  <div class="section-title" id="listTitle">🔥 Top aksiyalar</div>
+  <div id="stocksContainer"></div>
+</div>
+
+<div class="modal" id="detailModal">
+  <div class="modal-header">
+    <div class="modal-back" onclick="closeModal()">←</div>
+    <div class="modal-title" id="modalTitle">Aksiya</div>
+  </div>
+  <div class="modal-body" id="modalBody"></div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item active" data-page="home">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label">Asosiy</div>
+  </div>
+  <div class="nav-item" data-page="signals">
+    <div class="nav-icon">📊</div>
+    <div class="nav-label">Signallar</div>
+  </div>
+  <div class="nav-item" data-page="market">
+    <div class="nav-icon">📈</div>
+    <div class="nav-label">Bozor</div>
+  </div>
+  <div class="nav-item" data-page="profile">
+    <div class="nav-icon">👤</div>
+    <div class="nav-label">Profil</div>
+  </div>
+</div>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+
+const STOCKS = [
+  { symbol: "AAPL", name: "🍎 Apple Inc.", price: 150.25, change: 2.3, dividend: 0.55, pe: 28.5, min52: 124.17, max52: 199.62, rsi: 45, risk: "past", halal: "halal", holdTime: "2-3 kun", holdPercent: 78, advice: "buy" },
+  { symbol: "MSFT", name: "💻 Microsoft", price: 380.50, change: 1.1, dividend: 0.75, pe: 32.1, min52: 310.00, max52: 430.82, rsi: 52, risk: "past", halal: "halal", holdTime: "3-4 kun", holdPercent: 72, advice: "wait" },
+  { symbol: "GOOGL", name: "🔍 Google", price: 138.75, change: -0.8, dividend: 0, pe: 24.3, min52: 115.83, max52: 155.20, rsi: 38, risk: "orta", halal: "halal", holdTime: "5-7 kun", holdPercent: 85, advice: "buy" },
+  { symbol: "TSLA", name: "🚗 Tesla", price: 245.80, change: -3.5, dividend: 0, pe: 45.2, min52: 138.80, max52: 299.29, rsi: 58, risk: "baland", halal: "halal", holdTime: "1-2 kun", holdPercent: 45, advice: "wait" },
+  { symbol: "AMZN", name: "📦 Amazon", price: 178.35, change: 1.8, dividend: 0, pe: 42.8, min52: 118.35, max52: 191.70, rsi: 60, risk: "orta", halal: "halal", holdTime: "3-5 kun", holdPercent: 68, advice: "wait" },
+  { symbol: "META", name: "📘 Meta", price: 505.20, change: 2.7, dividend: 0.4, pe: 26.5, min52: 274.38, max52: 531.49, rsi: 68, risk: "orta", halal: "shubhali", holdTime: "2-4 kun", holdPercent: 62, advice: "wait" },
+  { symbol: "NVDA", name: "🎮 NVIDIA", price: 875.30, change: 4.2, dividend: 0.02, pe: 65.8, min52: 392.30, max52: 974.00, rsi: 72, risk: "juda_baland", halal: "halal", holdTime: "1-2 kun", holdPercent: 35, advice: "sell" },
+  { symbol: "JPM", name: "🏦 JPMorgan", price: 195.40, change: 0.9, dividend: 2.4, pe: 11.8, min52: 135.19, max52: 200.94, rsi: 55, risk: "past", halal: "ribo", holdTime: "7-10 kun", holdPercent: 82, advice: "wait" },
+  { symbol: "MGM", name: "🎰 MGM Resorts", price: 42.10, change: -1.2, dividend: 0, pe: 13.2, min52: 34.15, max52: 51.30, rsi: 42, risk: "baland", halal: "haram", holdTime: "2-3 kun", holdPercent: 48, advice: "sell" },
+  { symbol: "KO", name: "🥤 Coca-Cola", price: 62.85, change: 0.3, dividend: 3.1, pe: 24.5, min52: 51.55, max52: 64.99, rsi: 48, risk: "past", halal: "halal", holdTime: "10-14 kun", holdPercent: 88, advice: "buy" }
+];
+
+const UZSE_HOLIDAYS = ["2026-01-01","2026-01-02","2026-03-09","2026-03-20","2026-03-21","2026-03-23","2026-05-11","2026-05-27","2026-05-28","2026-05-29","2026-08-31","2026-09-01","2026-12-08","2026-12-31"];
+
+function getTashkentNow() {
+  const now = new Date();
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  return new Date(utc + 5 * 3600000);
+}
+
+function getMarketStatus() {
+  const now = getTashkentNow();
+  const day = now.getDay();
+  const hh = now.getHours();
+  const mm = now.getMinutes();
+  const ss = now.getSeconds();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  const cur = hh * 3600 + mm * 60 + ss;
+
+  const openSec = 9 * 3600 + 30 * 60;
+  const closeSec = 16 * 3600;
+
+  if (day === 0 || day === 6) {
+    let daysLeft = day === 6 ? 2 : 1;
+    const secLeft = daysLeft * 86400 - cur + openSec;
+    return { status: "closed", reason: "Dam olish kuni", secLeft, next: "Dushanba 09:30" };
+  }
+
+  if (UZSE_HOLIDAYS.includes(todayStr)) {
+    return { status: "closed", reason: "Rasmiy bayram", secLeft: 86400 - cur + openSec, next: "Keyingi ish kuni" };
+  }
+
+  if (cur >= openSec && cur < closeSec) {
+    return { status: "open", reason: "Savdo davom etmoqda", secLeft: closeSec - cur, next: "16:00 da yopiladi" };
+  }
+
+  if (cur < openSec) {
+    return { status: "pending", reason: "Ochilishga tayyor", secLeft: openSec - cur, next: "09:30 da ochiladi" };
+  }
+
+  const secLeft = 86400 - cur + openSec;
+  return { status: "closed", reason: "Savdo tugagan", secLeft, next: "Ertaga 09:30" };
+}
+
+function formatTime(sec) {
+  if (sec < 0) sec = 0;
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function updateMarket() {
+  const info = getMarketStatus();
+  const dot = document.getElementById('marketDot');
+  const title = document.getElementById('marketTitle');
+  const sub = document.getElementById('marketSub');
+  const timer = document.getElementById('marketTimer');
+
+  dot.className = 'market-dot ' + info.status;
+  timer.className = 'market-timer ' + info.status;
+
+  if (info.status === 'open') {
+    title.textContent = '🟢 BOZOR OCHIQ';
+    sub.textContent = info.reason + ' • Yopilishga:';
+  } else if (info.status === 'pending') {
+    title.textContent = '🟡 OCHILISHGA TAYYOR';
+    sub.textContent = info.reason + ' • Ochilishga:';
+  } else {
+    title.textContent = '🔴 BOZOR YOPIQ';
+    sub.textContent = info.reason + ' • Keyingisiga:';
+  }
+  timer.textContent = formatTime(info.secLeft);
+}
+setInterval(updateMarket, 1000);
+updateMarket();
+
+function getHalalTag(h) {
+  if (h === 'halal') return '<span class="tag halal">✅ Halol</span>';
+  if (h === 'haram') return '<span class="tag haram">❌ Harom</span>';
+  if (h === 'ribo') return '<span class="tag ribo">🚫 Ribo</span>';
+  return '<span class="tag shubhali">⚠️ Shubhali</span>';
+}
+
+function getAdviceTag(a) {
+  if (a === 'buy') return '<span class="tag advice-buy">🎯 Olish mumkin</span>';
+  if (a === 'wait') return '<span class="tag advice-wait">⚖️ Kutish</span>';
+  return '<span class="tag advice-sell">❌ Olmay turing</span>';
+}
+
+function getRiskLabel(r) {
+  if (r === 'past') return '🟢 Past';
+  if (r === 'orta') return '🟡 O\'rta';
+  if (r === 'baland') return '🟠 Baland';
+  return '🔴 Juda baland';
+}
+
+function renderStocks(filter = 'all', query = '') {
+  const container = document.getElementById('stocksContainer');
+  let list = STOCKS.slice();
+
+  if (query) {
+    const q = query.toLowerCase();
+    list = list.filter(s => s.symbol.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
+  }
+
+  if (filter === 'halal') list = list.filter(s => s.halal === 'halal');
+  if (filter === 'buy') list = list.filter(s => s.advice === 'buy');
+  if (filter === 'low') list = list.filter(s => s.risk === 'past');
+
+  if (!list.length) {
+    container.innerHTML = '<div class="empty">Hech narsa topilmadi 🔍</div>';
+    return;
+  }
+
+  container.innerHTML = list.map(s => {
+    const cls = s.change >= 0 ? 'up' : 'down';
+    const sign = s.change >= 0 ? '+' : '';
+    return `
+      <div class="stock-card ${s.halal}" onclick="openStock('${s.symbol}')">
+        <div class="stock-row1">
+          <div><span class="stock-name">${s.name}</span><span class="stock-symbol">${s.symbol}</span></div>
+        </div>
+        <div class="stock-row2">
+          <div class="stock-price">$${s.price.toFixed(2)}</div>
+          <div class="stock-change ${cls}">${sign}${s.change}%</div>
+        </div>
+        <div class="stock-tags">
+          ${getHalalTag(s.halal)}
+          ${getAdviceTag(s.advice)}
+          <span class="tag">⚠️ ${getRiskLabel(s.risk)}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+renderStocks();
+
+let currentFilter = 'all';
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  renderStocks(currentFilter, e.target.value.trim());
+});
+
+document.getElementById('filters').addEventListener('click', (e) => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = btn.dataset.filter;
+  renderStocks(currentFilter, document.getElementById('searchInput').value.trim());
+});
+
+function openStock(symbol) {
+  const s = STOCKS.find(x => x.symbol === symbol);
+  if (!s) return;
+  const modal = document.getElementById('detailModal');
+  document.getElementById('modalTitle').textContent = s.symbol + ' — ' + s.name;
+
+  const rng = s.max52 - s.min52;
+  const pos = rng > 0 ? Math.round(((s.price - s.min52) / rng) * 100) : 50;
+  const cls = s.change >= 0 ? 'up' : 'down';
+  const sign = s.change >= 0 ? '+' : '';
+
+  let rsiState = 'normal';
+  if (s.rsi < 30) rsiState = 'juda arzon 🔥';
+  else if (s.rsi < 45) rsiState = 'arzon';
+  else if (s.rsi < 55) rsiState = 'normal';
+  else if (s.rsi < 70) rsiState = 'qimmat';
+  else rsiState = 'juda qimmat ⚠️';
+
+  const canBuy = s.halal !== 'haram' && s.halal !== 'ribo';
+  const adviceText = canBuy
+    ? (s.advice === 'buy' ? '✅ OLISH MUMKIN' : s.advice === 'wait' ? '⚖️ KUTISH' : '❌ OLMAY TURING')
+    : (s.halal === 'haram' ? '❌ HAROM — Sotib olmang!' : '🚫 RIBO — Sotib olmang!');
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-price">
+      <div class="detail-price-num">$${s.price.toFixed(2)}</div>
+      <div class="detail-price-chg ${cls}">${sign}${s.change}%</div>
     </div>
 
-    <!-- Aksiyalar ro'yxati (Banklarsiz, faqat ishlab chiqarish va sanoat) -->
-    <div class="market-list">
-        
-        <!-- UzAuto Motors -->
-        <div class="stock-item">
-            <div class="stock-info">
-                <span class="stock-name">UzAuto Motors AJ</span>
-                <span class="stock-ticker">UZMT</span>
-            </div>
-            <div class="stock-meta">
-                <div class="stock-price">55 900 UZS</div>
-                <div class="stock-status">Onlayn monitoring</div>
-            </div>
-        </div>
-
-        <!-- Uztelecom -->
-        <div class="stock-item">
-            <div class="stock-info">
-                <span class="stock-name">Uztelecom AJ</span>
-                <span class="stock-ticker">UZTL</span>
-            </div>
-            <div class="stock-meta">
-                <div class="stock-price">18 400 UZS</div>
-                <div class="stock-status">Onlayn monitoring</div>
-            </div>
-        </div>
-
-        <!-- Kvarts -->
-        <div class="stock-item">
-            <div class="stock-info">
-                <span class="stock-name">Kvarts AJ</span>
-                <span class="stock-ticker">KVTS</span>
-            </div>
-            <div class="stock-meta">
-                <div class="stock-price">3 435 UZS</div>
-                <div class="stock-status">Onlayn monitoring</div>
-            </div>
-        </div>
-
-        <!-- OKMK -->
-        <div class="stock-item">
-            <div class="stock-info">
-                <span class="stock-name">Olmaliq KMK (OKMK)</span>
-                <span class="stock-ticker">AGMK</span>
-            </div>
-            <div class="stock-meta">
-                <div class="stock-price">185 000 UZS</div>
-                <div class="stock-status">Onlayn monitoring</div>
-            </div>
-        </div>
-
-        <!-- NGMK -->
-        <div class="stock-item">
-            <div class="stock-info">
-                <span class="stock-name">Navoiy KMK (NGMK)</span>
-                <span class="stock-ticker">NGMK</span>
-            </div>
-            <div class="stock-meta">
-                <div class="stock-price">220 000 UZS</div>
-                <div class="stock-status">Onlayn monitoring</div>
-            </div>
-        </div>
-
-        <!-- Tovar birjasi -->
-        <div class="stock-item">
-            <div class="stock-info">
-                <span class="stock-name">Tovar-Xomashyo Birjasi</span>
-                <span class="stock-ticker">URTS</span>
-            </div>
-            <div class="stock-meta">
-                <div class="stock-price">26 500 UZS</div>
-                <div class="stock-status">Onlayn monitoring</div>
-            </div>
-        </div>
-
-        <!-- Qizilqumsement -->
-        <div class="stock-item">
-            <div class="stock-info">
-                <span class="stock-name">Qizilqumsement AJ</span>
-                <span class="stock-ticker">QZSM</span>
-            </div>
-            <div class="stock-meta">
-                <div class="stock-price">4 150 UZS</div>
-                <div class="stock-status">Onlayn monitoring</div>
-            </div>
-        </div>
-
+    <div class="detail-rows">
+      <div class="detail-row"><span class="detail-row-label">💰 Dividend</span><span class="detail-row-value">${s.dividend}%</span></div>
+      <div class="detail-row"><span class="detail-row-label">📊 P/E</span><span class="detail-row-value">${s.pe}</span></div>
+      <div class="detail-row"><span class="detail-row-label">📉 52W MIN</span><span class="detail-row-value">$${s.min52}</span></div>
+      <div class="detail-row"><span class="detail-row-label">📈 52W MAX</span><span class="detail-row-value">$${s.max52}</span></div>
+      <div class="detail-row"><span class="detail-row-label">📈 RSI</span><span class="detail-row-value">${s.rsi} (${rsiState})</span></div>
     </div>
 
-    <script>
-        // Telegram oynasini to'liq ekran qilib ochish sozlamasi
-        const webapp = window.Telegram.WebApp;
-        webapp.ready();
-        webapp.expand();
-    </script>
+    <div style="margin:16px 0;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:6px;">
+        <span>📍 52W pozitsiyasi</span><span>${pos}%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pos}%"></div></div>
+    </div>
+
+    <div style="margin:16px 0;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:6px;">
+        <span>📊 Uslash foizi (${s.holdTime})</span><span>${s.holdPercent}%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${s.holdPercent}%"></div></div>
+    </div>
+
+    <div class="detail-rows">
+      <div class="detail-row"><span class="detail-row-label">🕌 Holat</span><span class="detail-row-value">${getHalalTag(s.halal)}</span></div>
+      <div class="detail-row"><span class="detail-row-label">⚠️ Xavf</span><span class="detail-row-value">${getRiskLabel(s.risk)}</span></div>
+      <div class="detail-row"><span class="detail-row-label">⏱ Uslash vaqti (+-1%)</span><span class="detail-row-value">${s.holdTime}</span></div>
+    </div>
+
+    <div style="text-align:center;font-size:16px;font-weight:700;margin-top:20px;color:${canBuy ? '#00ff88' : '#ff3b3b'};">
+      ${adviceText}
+    </div>
+
+    <button class="action-btn ${canBuy ? '' : 'disabled'}" onclick="${canBuy ? `buyStock('${s.symbol}')` : ''}">
+      ${canBuy ? '🛒 Sotib olish' : '🚫 Sotib olib bo\'lmaydi'}
+    </button>
+  `;
+
+  modal.classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('detailModal').classList.remove('open');
+}
+
+function buyStock(symbol) {
+  const s = STOCKS.find(x => x.symbol === symbol);
+  if (!s) return;
+  tg?.showPopup({
+    title: "✅ Sotib olindi",
+    message: `${s.name} — $${s.price}`,
+    buttons: [{ type: "ok" }]
+  });
+}
+</script>
 </body>
 </html>
