@@ -405,6 +405,47 @@ const STOCKS = [
   { symbol: "KO", name: "🥤 Coca-Cola", price: 62.85, change: 0.3, dividend: 3.1, pe: 24.5, min52: 51.55, max52: 64.99, rsi: 48, risk: "past", halal: "halal", holdTime: "10-14 kun", holdPercent: 88, advice: "buy" }
 ];
 
+// ===== UZSE REAL VAQT MA'LUMOTLARINI OLISH =====
+async function fetchUZSEData() {
+    try {
+        const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://uzse.uz/trade_results');
+        const response = await fetch(url);
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const tickers = doc.querySelectorAll('.ticker-item');
+        
+        tickers.forEach(ticker => {
+            const titleLink = ticker.querySelector('.title a');
+            if (!titleLink) return;
+            const fullName = titleLink.textContent.trim();
+            const symbolMatch = fullName.match(/^([A-Z0-9]+)/);
+            if (!symbolMatch) return;
+            const symbol = symbolMatch[1];
+            const prices = ticker.querySelectorAll('.price-value');
+            if (prices.length < 2) return;
+            const closePrice = parseFloat(prices[0].textContent.replace(/,/g, '')) || 0;
+            const lastPrice = parseFloat(prices[1].textContent.replace(/,/g, '')) || 0;
+            
+            const stock = STOCKS.find(s => s.symbol === symbol);
+            if (stock) {
+                stock.price = lastPrice || closePrice;
+                if (stock.prevPrice) {
+                    stock.change = ((stock.price - stock.prevPrice) / stock.prevPrice * 100).toFixed(2);
+                }
+                stock.prevPrice = stock.price;
+            }
+        });
+        
+        renderStocks(currentFilter, document.getElementById('searchInput').value.trim());
+        
+    } catch (error) {
+        console.error('UZSE ma\'lumotlarini olishda xatolik:', error);
+    }
+}
+
+fetchUZSEData();
+setInterval(fetchUZSEData, 30000);
 const UZSE_HOLIDAYS = ["2026-01-01","2026-01-02","2026-03-09","2026-03-20","2026-03-21","2026-03-23","2026-05-11","2026-05-27","2026-05-28","2026-05-29","2026-08-31","2026-09-01","2026-12-08","2026-12-31"];
 
 function getTashkentNow() {
