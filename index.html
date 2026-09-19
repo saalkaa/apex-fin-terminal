@@ -9,323 +9,120 @@
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0a0a0a;
-    color: #fff;
-    min-height: 100vh;
-    padding-bottom: 80px;
-    overflow-x: hidden;
+    background: #0a0a0a; color: #fff; min-height: 100vh;
+    padding-bottom: 80px; overflow-x: hidden;
   }
-  .header {
-    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
-    padding: 16px 20px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    border-bottom: 1px solid #1f1f1f;
-  }
-  .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  .logo {
-    font-size: 18px;
-    font-weight: 700;
-    color: #00ff88;
-    letter-spacing: 1px;
-  }
+  .header { background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+    padding: 16px 20px; position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid #1f1f1f; }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .logo { font-size: 18px; font-weight: 700; color: #00ff88; letter-spacing: 1px; }
   .logo span { color: #fff; }
-  .market-status {
-    background: #141414;
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border: 1px solid #1f1f1f;
-  }
-  .market-dot {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    background: #666;
-    box-shadow: 0 0 12px #666;
-    flex-shrink: 0;
-  }
+  .market-status { background: #141414; border-radius: 12px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px; border: 1px solid #1f1f1f; }
+  .market-dot { width: 12px; height: 12px; border-radius: 50%; background: #666;
+    box-shadow: 0 0 12px #666; flex-shrink: 0; }
   .market-dot.open { background: #00ff88; box-shadow: 0 0 12px #00ff88; animation: pulse 1.5s infinite; }
   .market-dot.closed { background: #ff3b3b; box-shadow: 0 0 12px #ff3b3b; }
   .market-dot.pending { background: #ffbb00; box-shadow: 0 0 12px #ffbb00; }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(1.2); }
-  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.6;transform:scale(1.2);} }
   .market-info { flex: 1; }
   .market-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
   .market-sub { font-size: 11px; color: #888; }
-  .market-timer {
-    font-size: 18px;
-    font-weight: 700;
-    color: #00ff88;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 1px;
-  }
+  .market-timer { font-size: 18px; font-weight: 700; color: #00ff88;
+    font-variant-numeric: tabular-nums; letter-spacing: 1px; }
   .market-timer.closed { color: #ff3b3b; }
   .market-timer.pending { color: #ffbb00; }
-  .search-box {
-    padding: 16px 20px 8px;
-    position: relative;
-  }
-  .search-box input {
-    width: 100%;
-    background: #141414;
-    border: 1px solid #1f1f1f;
-    border-radius: 12px;
-    padding: 14px 16px 14px 44px;
-    color: #fff;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
+  .search-box { padding: 16px 20px 8px; position: relative; }
+  .search-box input { width: 100%; background: #141414; border: 1px solid #1f1f1f;
+    border-radius: 12px; padding: 14px 16px 14px 44px; color: #fff; font-size: 14px;
+    outline: none; transition: border-color .2s; }
   .search-box input:focus { border-color: #00ff88; }
   .search-box input::placeholder { color: #555; }
-  .search-icon {
-    position: absolute;
-    left: 34px; top: 50%;
-    transform: translateY(-25%);
-    font-size: 16px;
-    color: #666;
-    pointer-events: none;
-  }
-  .filters {
-    padding: 8px 20px 16px;
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
+  .search-icon { position: absolute; left: 34px; top: 50%; transform: translateY(-25%);
+    font-size: 16px; color: #666; pointer-events: none; }
+  .filters { padding: 8px 20px 16px; display: flex; gap: 8px;
+    overflow-x: auto; scrollbar-width: none; }
   .filters::-webkit-scrollbar { display: none; }
-  .filter-btn {
-    background: #141414;
-    border: 1px solid #1f1f1f;
-    border-radius: 20px;
-    padding: 8px 16px;
-    color: #888;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .filter-btn.active {
-    background: #00ff88;
-    color: #000;
-    border-color: #00ff88;
-  }
+  .filter-btn { background: #141414; border: 1px solid #1f1f1f; border-radius: 20px;
+    padding: 8px 16px; color: #888; font-size: 12px; font-weight: 600;
+    white-space: nowrap; cursor: pointer; transition: all .2s; }
+  .filter-btn.active { background: #00ff88; color: #000; border-color: #00ff88; }
   .stocks-list { padding: 0 16px; }
-  .section-title {
-    font-size: 13px;
-    color: #888;
-    font-weight: 600;
-    padding: 8px 4px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .stock-card {
-    background: linear-gradient(135deg, #141414 0%, #181818 100%);
-    border: 1px solid #1f1f1f;
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .stock-card:active { transform: scale(0.98); border-color: #00ff88; }
-  .stock-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: #333;
-  }
+  .section-title { font-size: 13px; color: #888; font-weight: 600; padding: 8px 4px;
+    text-transform: uppercase; letter-spacing: 1px; }
+  .stock-card { background: linear-gradient(135deg, #141414 0%, #181818 100%);
+    border: 1px solid #1f1f1f; border-radius: 14px; padding: 14px 16px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s;
+    position: relative; overflow: hidden; }
+  .stock-card:active { transform: scale(.98); border-color: #00ff88; }
+  .stock-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: #333; }
   .stock-card.halal::before { background: #00ff88; }
   .stock-card.haram::before { background: #ff3b3b; }
   .stock-card.ribo::before { background: #ffbb00; }
   .stock-card.shubhali::before { background: #ff8800; }
-  .stock-row1 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
+  .stock-row1 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .stock-name { font-size: 15px; font-weight: 600; }
-  .stock-symbol {
-    font-size: 11px;
-    color: #666;
-    background: #1f1f1f;
-    padding: 2px 8px;
-    border-radius: 6px;
-    margin-left: 8px;
-  }
-  .stock-row2 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  .stock-symbol { font-size: 11px; color: #666; background: #1f1f1f;
+    padding: 2px 8px; border-radius: 6px; margin-left: 8px; }
+  .stock-row2 { display: flex; justify-content: space-between; align-items: center; }
   .stock-price { font-size: 17px; font-weight: 700; color: #fff; }
   .stock-change { font-size: 14px; font-weight: 600; }
   .stock-change.up { color: #00ff88; }
   .stock-change.down { color: #ff3b3b; }
-  .stock-tags {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-  }
-  .tag {
-    font-size: 10px;
-    font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 6px;
-    background: #1f1f1f;
-    color: #aaa;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .tag.halal { background: rgba(0,255,136,0.15); color: #00ff88; }
-  .tag.haram { background: rgba(255,59,59,0.15); color: #ff3b3b; }
-  .tag.ribo { background: rgba(255,187,0,0.15); color: #ffbb00; }
-  .tag.shubhali { background: rgba(255,136,0,0.15); color: #ff8800; }
-  .tag.advice-buy { background: rgba(0,255,136,0.2); color: #00ff88; }
-  .tag.advice-wait { background: rgba(255,187,0,0.2); color: #ffbb00; }
-  .tag.advice-sell { background: rgba(255,59,59,0.2); color: #ff3b3b; }
-  .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: rgba(15,15,15,0.98);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid #1f1f1f;
-    display: flex;
-    padding: 8px 0 12px;
-    z-index: 100;
-  }
-  .nav-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #666;
-  }
+  .stock-tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .tag { font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 6px;
+    background: #1f1f1f; color: #aaa; text-transform: uppercase; letter-spacing: .5px; }
+  .tag.halal { background: rgba(0,255,136,.15); color: #00ff88; }
+  .tag.haram { background: rgba(255,59,59,.15); color: #ff3b3b; }
+  .tag.ribo { background: rgba(255,187,0,.15); color: #ffbb00; }
+  .tag.shubhali { background: rgba(255,136,0,.15); color: #ff8800; }
+  .tag.advice-buy { background: rgba(0,255,136,.2); color: #00ff88; }
+  .tag.advice-wait { background: rgba(255,187,0,.2); color: #ffbb00; }
+  .tag.advice-sell { background: rgba(255,59,59,.2); color: #ff3b3b; }
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(15,15,15,.98); backdrop-filter: blur(20px);
+    border-top: 1px solid #1f1f1f; display: flex; padding: 8px 0 12px; z-index: 100; }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 6px; cursor: pointer; transition: all .2s; color: #666; }
   .nav-item.active { color: #00ff88; }
   .nav-icon { font-size: 20px; }
   .nav-label { font-size: 10px; font-weight: 600; }
-  .modal {
-    position: fixed;
-    inset: 0;
-    background: #0a0a0a;
-    z-index: 200;
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-    overflow-y: auto;
-    padding-bottom: 30px;
-  }
+  .modal { position: fixed; inset: 0; background: #0a0a0a; z-index: 200;
+    transform: translateY(100%); transition: transform .3s ease;
+    overflow-y: auto; padding-bottom: 30px; }
   .modal.open { transform: translateY(0); }
-  .modal-header {
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid #1f1f1f;
-    position: sticky;
-    top: 0;
-    background: #0a0a0a;
-    z-index: 10;
-  }
-  .modal-back {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    background: #141414;
-    border: 1px solid #1f1f1f;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    cursor: pointer;
-  }
+  .modal-header { padding: 16px 20px; display: flex; align-items: center;
+    gap: 12px; border-bottom: 1px solid #1f1f1f; position: sticky; top: 0;
+    background: #0a0a0a; z-index: 10; }
+  .modal-back { width: 36px; height: 36px; border-radius: 10px; background: #141414;
+    border: 1px solid #1f1f1f; display: flex; align-items: center;
+    justify-content: center; font-size: 16px; cursor: pointer; }
   .modal-title { font-size: 15px; font-weight: 600; flex: 1; }
   .modal-body { padding: 20px; }
-  .detail-price {
-    text-align: center;
-    padding: 20px 0;
-  }
-  .detail-price-num {
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
+  .detail-price { text-align: center; padding: 20px 0; }
+  .detail-price-num { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
   .detail-price-chg { font-size: 15px; font-weight: 600; }
   .detail-price-chg.up { color: #00ff88; }
   .detail-price-chg.down { color: #ff3b3b; }
-  .detail-rows {
-    background: #141414;
-    border: 1px solid #1f1f1f;
-    border-radius: 10px;
-    padding: 4px 16px;
-    margin: 16px 0;
-  }
-  .detail-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid #1f1f1f;
-    font-size: 13px;
-  }
+  .detail-rows { background: #141414; border: 1px solid #1f1f1f;
+    border-radius: 10px; padding: 4px 16px; margin: 16px 0; }
+  .detail-row { display: flex; justify-content: space-between; padding: 12px 0;
+    border-bottom: 1px solid #1f1f1f; font-size: 13px; }
   .detail-row:last-child { border-bottom: none; }
   .detail-row-label { color: #888; }
   .detail-row-value { font-weight: 600; }
-  .progress-bar {
-    height: 6px;
-    background: #1f1f1f;
-    border-radius: 3px;
-    overflow: hidden;
-    margin-top: 6px;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #00ff88, #00cc6a);
-    border-radius: 3px;
-    transition: width 0.5s;
-  }
-  .action-btn {
-    width: 100%;
-    padding: 16px;
-    border-radius: 12px;
-    border: none;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 16px;
-    background: #00ff88;
-    color: #000;
-    transition: all 0.2s;
-  }
-  .action-btn:active { transform: scale(0.98); }
-  .action-btn.disabled {
-    background: #1f1f1f;
-    color: #666;
-    cursor: not-allowed;
-  }
-  .empty {
-    text-align: center;
-    padding: 40px 20px;
-    color: #666;
-    font-size: 13px;
-  }
+  .progress-bar { height: 6px; background: #1f1f1f; border-radius: 3px;
+    overflow: hidden; margin-top: 6px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #00ff88, #00cc6a);
+    border-radius: 3px; transition: width .5s; }
+  .action-btn { width: 100%; padding: 16px; border-radius: 12px; border: none;
+    font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px;
+    background: #00ff88; color: #000; transition: all .2s; }
+  .action-btn:active { transform: scale(.98); }
+  .action-btn.disabled { background: #1f1f1f; color: #666; cursor: not-allowed; }
+  .empty { text-align: center; padding: 40px 20px; color: #666; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -346,7 +143,7 @@
 
 <div class="search-box">
   <span class="search-icon">🔍</span>
-  <input type="text" id="searchInput" placeholder="Aksiya qidirish (masalan: AAPL)">
+  <input type="text" id="searchInput" placeholder="Aksiya qidirish (masalan: AGMK)">
 </div>
 
 <div class="filters" id="filters">
@@ -357,7 +154,7 @@
 </div>
 
 <div class="stocks-list">
-  <div class="section-title" id="listTitle">🔥 Top aksiyalar</div>
+  <div class="section-title">🇺🇿 UZSE aksiyalari</div>
   <div id="stocksContainer"></div>
 </div>
 
@@ -370,82 +167,97 @@
 </div>
 
 <div class="bottom-nav">
-  <div class="nav-item active" data-page="home">
-    <div class="nav-icon">🏠</div>
-    <div class="nav-label">Asosiy</div>
-  </div>
-  <div class="nav-item" data-page="signals">
-    <div class="nav-icon">📊</div>
-    <div class="nav-label">Signallar</div>
-  </div>
-  <div class="nav-item" data-page="market">
-    <div class="nav-icon">📈</div>
-    <div class="nav-label">Bozor</div>
-  </div>
-  <div class="nav-item" data-page="profile">
-    <div class="nav-icon">👤</div>
-    <div class="nav-label">Profil</div>
-  </div>
+  <div class="nav-item active"><div class="nav-icon">🏠</div><div class="nav-label">Asosiy</div></div>
+  <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-label">Signallar</div></div>
+  <div class="nav-item"><div class="nav-icon">📈</div><div class="nav-label">Bozor</div></div>
+  <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Profil</div></div>
 </div>
 
 <script>
 const tg = window.Telegram?.WebApp;
-if (tg) { tg.ready(); tg.expand(); }
-
-const STOCKS = [
-  { symbol: "AAPL", name: "🍎 Apple Inc.", price: 150.25, change: 2.3, dividend: 0.55, pe: 28.5, min52: 124.17, max52: 199.62, rsi: 45, risk: "past", halal: "halal", holdTime: "2-3 kun", holdPercent: 78, advice: "buy" },
-  { symbol: "MSFT", name: "💻 Microsoft", price: 380.50, change: 1.1, dividend: 0.75, pe: 32.1, min52: 310.00, max52: 430.82, rsi: 52, risk: "past", halal: "halal", holdTime: "3-4 kun", holdPercent: 72, advice: "wait" },
-  { symbol: "GOOGL", name: "🔍 Google", price: 138.75, change: -0.8, dividend: 0, pe: 24.3, min52: 115.83, max52: 155.20, rsi: 38, risk: "orta", halal: "halal", holdTime: "5-7 kun", holdPercent: 85, advice: "buy" },
-  { symbol: "TSLA", name: "🚗 Tesla", price: 245.80, change: -3.5, dividend: 0, pe: 45.2, min52: 138.80, max52: 299.29, rsi: 58, risk: "baland", halal: "halal", holdTime: "1-2 kun", holdPercent: 45, advice: "wait" },
-  { symbol: "AMZN", name: "📦 Amazon", price: 178.35, change: 1.8, dividend: 0, pe: 42.8, min52: 118.35, max52: 191.70, rsi: 60, risk: "orta", halal: "halal", holdTime: "3-5 kun", holdPercent: 68, advice: "wait" },
-  { symbol: "META", name: "📘 Meta", price: 505.20, change: 2.7, dividend: 0.4, pe: 26.5, min52: 274.38, max52: 531.49, rsi: 68, risk: "orta", halal: "shubhali", holdTime: "2-4 kun", holdPercent: 62, advice: "wait" },
-  { symbol: "NVDA", name: "🎮 NVIDIA", price: 875.30, change: 4.2, dividend: 0.02, pe: 65.8, min52: 392.30, max52: 974.00, rsi: 72, risk: "juda_baland", halal: "halal", holdTime: "1-2 kun", holdPercent: 35, advice: "sell" },
-  { symbol: "JPM", name: "🏦 JPMorgan", price: 195.40, change: 0.9, dividend: 2.4, pe: 11.8, min52: 135.19, max52: 200.94, rsi: 55, risk: "past", halal: "ribo", holdTime: "7-10 kun", holdPercent: 82, advice: "wait" },
-  { symbol: "MGM", name: "🎰 MGM Resorts", price: 42.10, change: -1.2, dividend: 0, pe: 13.2, min52: 34.15, max52: 51.30, rsi: 42, risk: "baland", halal: "haram", holdTime: "2-3 kun", holdPercent: 48, advice: "sell" },
-  { symbol: "KO", name: "🥤 Coca-Cola", price: 62.85, change: 0.3, dividend: 3.1, pe: 24.5, min52: 51.55, max52: 64.99, rsi: 48, risk: "past", halal: "halal", holdTime: "10-14 kun", holdPercent: 88, advice: "buy" }
-];
-
-// ===== UZSE REAL VAQT MA'LUMOTLARINI OLISH =====
-async function fetchUZSEData() {
-    try {
-        const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://uzse.uz/trade_results');
-        const response = await fetch(url);
-        const html = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const tickers = doc.querySelectorAll('.ticker-item');
-        
-        tickers.forEach(ticker => {
-            const titleLink = ticker.querySelector('.title a');
-            if (!titleLink) return;
-            const fullName = titleLink.textContent.trim();
-            const symbolMatch = fullName.match(/^([A-Z0-9]+)/);
-            if (!symbolMatch) return;
-            const symbol = symbolMatch[1];
-            const prices = ticker.querySelectorAll('.price-value');
-            if (prices.length < 2) return;
-            const closePrice = parseFloat(prices[0].textContent.replace(/,/g, '')) || 0;
-            const lastPrice = parseFloat(prices[1].textContent.replace(/,/g, '')) || 0;
-            
-            const stock = STOCKS.find(s => s.symbol === symbol);
-            if (stock) {
-                stock.price = lastPrice || closePrice;
-                if (stock.prevPrice) {
-                    stock.change = ((stock.price - stock.prevPrice) / stock.prevPrice * 100).toFixed(2);
-                }
-                stock.prevPrice = stock.price;
-            }
-        });
-        
-        renderStocks(currentFilter, document.getElementById('searchInput').value.trim());
-        
-    } catch (error) {
-        console.error('UZSE ma\'lumotlarini olishda xatolik:', error);
-    }
+if (tg) {
+  tg.ready();
+  tg.expand();
+  if (tg.requestFullscreen) tg.requestFullscreen();
+  tg.setHeaderColor('#0a0a0a');
+  tg.setBackgroundColor('#0a0a0a');
+  tg.disableVerticalSwipes();
 }
 
-fetchUZSEData();
+// ===== STOCKS =====
+const STOCKS = [
+  { symbol: "UZMT", name: "🏭 O'zmetkombinat", price: 6850, change: 1.5, dividend: 4.2, pe: 8.5, min52: 5200, max52: 8200, rsi: 52, risk: "past", holdTime: "5-7 kun", holdPercent: 78, advice: "buy", business: "metallurgiya", debtRatio: 12, interestIncome: 1.5 },
+  { symbol: "UZTL", name: "📡 O'zbektelekom", price: 2150, change: 0.8, dividend: 5.1, pe: 6.2, min52: 1450, max52: 2600, rsi: 48, risk: "past", holdTime: "7-10 kun", holdPercent: 82, advice: "buy", business: "telekom", debtRatio: 18, interestIncome: 2.1 },
+  { symbol: "KVTS", name: "🔮 Kvarts", price: 42500, change: 2.3, dividend: 3.5, pe: 12.4, min52: 31000, max52: 48000, rsi: 55, risk: "orta", holdTime: "3-5 kun", holdPercent: 72, advice: "wait", business: "shisha", debtRatio: 22, interestIncome: 3.2 },
+  { symbol: "AGMK", name: "⛏️ Olmaliq KMK", price: 78500, change: 3.1, dividend: 6.8, pe: 5.8, min52: 55000, max52: 85000, rsi: 62, risk: "orta", holdTime: "5-8 kun", holdPercent: 76, advice: "buy", business: "metallurgiya", debtRatio: 15, interestIncome: 2.5 },
+  { symbol: "NGMK", name: "💎 Navoiy KMK", price: 22400, change: 1.2, dividend: 7.5, pe: 4.9, min52: 15200, max52: 24000, rsi: 58, risk: "orta", holdTime: "7-10 kun", holdPercent: 80, advice: "buy", business: "metallurgiya", debtRatio: 8, interestIncome: 1.2 },
+  { symbol: "URTS", name: "🚂 Temir yo'llari", price: 2850, change: -0.5, dividend: 4.8, pe: 7.1, min52: 2100, max52: 3400, rsi: 45, risk: "past", holdTime: "8-12 kun", holdPercent: 85, advice: "wait", business: "transport", debtRatio: 25, interestIncome: 3.8 },
+  { symbol: "QZSM", name: "🧱 Qizilqum Sement", price: 8200, change: 1.8, dividend: 3.9, pe: 9.8, min52: 5500, max52: 9500, rsi: 51, risk: "orta", holdTime: "5-7 kun", holdPercent: 74, advice: "wait", business: "qurilish", debtRatio: 20, interestIncome: 4.1 },
+  { symbol: "KRSN", name: "🍞 Krasniy Vostok", price: 1250, change: 0.4, dividend: 6.2, pe: 5.4, min52: 850, max52: 1500, rsi: 47, risk: "past", holdTime: "10-14 kun", holdPercent: 88, advice: "buy", business: "oziq-ovqat", debtRatio: 10, interestIncome: 0.8 },
+  { symbol: "UZNF", name: "⛽ O'zbekneftgaz", price: 15800, change: 2.8, dividend: 8.2, pe: 3.6, min52: 10500, max52: 17500, rsi: 63, risk: "orta", holdTime: "7-10 kun", holdPercent: 79, advice: "buy", business: "neft-gaz", debtRatio: 14, interestIncome: 2.0 },
+  { symbol: "QSRM", name: "🧵 Quvasoy", price: 3450, change: 0.9, dividend: 4.5, pe: 6.8, min52: 2300, max52: 4100, rsi: 49, risk: "orta", holdTime: "6-9 kun", holdPercent: 73, advice: "wait", business: "to'qimachilik", debtRatio: 19, interestIncome: 2.8 },
+  { symbol: "SPZN", name: "🛢️ Sanoat Energetika", price: 5200, change: 1.4, dividend: 5.5, pe: 6.1, min52: 3500, max52: 6500, rsi: 53, risk: "orta", holdTime: "5-8 kun", holdPercent: 75, advice: "buy", business: "energetika", debtRatio: 16, interestIncome: 1.8 },
+  { symbol: "HMKB", name: "🏦 Xalq Banki", price: 385, change: -1.2, dividend: 5.5, pe: 3.2, min52: 210, max52: 480, rsi: 42, risk: "orta", holdTime: "3-5 kun", holdPercent: 65, advice: "wait", business: "bank", debtRatio: 85, interestIncome: 92 },
+  { symbol: "SQBN", name: "🏦 SQB Bank", price: 245, change: 0.8, dividend: 6.8, pe: 2.8, min52: 145, max52: 310, rsi: 50, risk: "orta", holdTime: "4-6 kun", holdPercent: 72, advice: "wait", business: "bank", debtRatio: 88, interestIncome: 90 },
+  { symbol: "KSCB", name: "🏦 Qishloq Qurilish Bank", price: 720, change: 1.5, dividend: 4.9, pe: 4.1, min52: 480, max52: 890, rsi: 54, risk: "orta", holdTime: "5-7 kun", holdPercent: 68, advice: "wait", business: "bank", debtRatio: 82, interestIncome: 88 },
+  { symbol: "TRSB", name: "🏦 Trastbank", price: 155, change: -0.6, dividend: 3.2, pe: 5.8, min52: 95, max52: 220, rsi: 44, risk: "baland", holdTime: "3-5 kun", holdPercent: 55, advice: "wait", business: "bank", debtRatio: 90, interestIncome: 94 },
+  { symbol: "IPTB", name: "🏦 Ipoteka Bank", price: 890, change: 2.1, dividend: 5.4, pe: 4.3, min52: 550, max52: 1050, rsi: 59, risk: "orta", holdTime: "5-8 kun", holdPercent: 70, advice: "wait", business: "bank", debtRatio: 80, interestIncome: 89 },
+  { symbol: "QIMR", name: "🎰 Qimor servis", price: 420, change: -2.5, dividend: 0, pe: 8.9, min52: 380, max52: 650, rsi: 38, risk: "baland", holdTime: "1-2 kun", holdPercent: 35, advice: "sell", business: "qimor", debtRatio: 25, interestIncome: 3.5 }
+];
+
+// ===== ISLOMIY MOLIYA TEKSHIRUVI =====
+function checkHalal(s) {
+  const haramBiz = ["qimor","alkogol","cho'chqa","qurol","ribo","bank","sug'urta"];
+  if (haramBiz.includes(s.business)) {
+    if (s.business === "bank") return { status: "ribo", reason: "Asosiy faoliyat — foizli bank" };
+    return { status: "haram", reason: "Asosiy faoliyat harom" };
+  }
+  if (s.debtRatio > 30) return { status: "haram", reason: `Foizli qarz ${s.debtRatio}% (chegara: 30%)` };
+  if (s.interestIncome > 5) return { status: "haram", reason: `Foizli daromad ${s.interestIncome}% (chegara: 5%)` };
+  if (s.debtRatio >= 25 || s.interestIncome >= 4) return { status: "shubhali", reason: `Chegaraga yaqin` };
+  return { status: "halal", reason: "AAOIFI standartlariga mos" };
+}
+STOCKS.forEach(s => { const c = checkHalal(s); s.halal = c.status; s.halalReason = c.reason; });
+
+// ===== UZSE REAL VAQT =====
+async function fetchUZSEData() {
+  try {
+    const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://uzse.uz/trade_results');
+    const response = await fetch(url);
+    const html = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const tickers = doc.querySelectorAll('.ticker-item');
+
+    tickers.forEach(ticker => {
+      const titleLink = ticker.querySelector('.title a');
+      if (!titleLink) return;
+      const fullName = titleLink.textContent.trim();
+      const symbolMatch = fullName.match(/^([A-Z0-9]+)/);
+      if (!symbolMatch) return;
+      const symbol = symbolMatch[1];
+      const prices = ticker.querySelectorAll('.price-value');
+      if (prices.length < 2) return;
+      const closePrice = parseFloat(prices[0].textContent.replace(/,/g, '')) || 0;
+      const lastPrice = parseFloat(prices[1].textContent.replace(/,/g, '')) || 0;
+
+      const stock = STOCKS.find(s => s.symbol === symbol);
+      if (stock) {
+        const newPrice = lastPrice || closePrice;
+        if (newPrice > 0 && stock.price) {
+          stock.change = parseFloat(((newPrice - stock.price) / stock.price * 100).toFixed(2));
+        }
+        if (newPrice > 0) stock.price = newPrice;
+      }
+    });
+    renderStocks(currentFilter, document.getElementById('searchInput').value.trim());
+  } catch (e) {
+    console.log('UZSE yangilash xatosi:', e);
+  }
+}
 setInterval(fetchUZSEData, 30000);
+
+// ===== BOZOR VAQTI =====
 const UZSE_HOLIDAYS = ["2026-01-01","2026-01-02","2026-03-09","2026-03-20","2026-03-21","2026-03-23","2026-05-11","2026-05-27","2026-05-28","2026-05-29","2026-08-31","2026-09-01","2026-12-08","2026-12-31"];
 
 function getTashkentNow() {
@@ -457,42 +269,30 @@ function getTashkentNow() {
 function getMarketStatus() {
   const now = getTashkentNow();
   const day = now.getDay();
-  const hh = now.getHours();
-  const mm = now.getMinutes();
-  const ss = now.getSeconds();
+  const hh = now.getHours(), mm = now.getMinutes(), ss = now.getSeconds();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
   const cur = hh * 3600 + mm * 60 + ss;
-
-  const openSec = 9 * 3600 + 30 * 60;
-  const closeSec = 16 * 3600;
+  const openSec = 9*3600 + 30*60, closeSec = 16*3600;
 
   if (day === 0 || day === 6) {
-    let daysLeft = day === 6 ? 2 : 1;
-    const secLeft = daysLeft * 86400 - cur + openSec;
-    return { status: "closed", reason: "Dam olish kuni", secLeft, next: "Dushanba 09:30" };
+    const daysLeft = day === 6 ? 2 : 1;
+    return { status: "closed", reason: "Dam olish kuni", secLeft: daysLeft*86400 - cur + openSec };
   }
-
   if (UZSE_HOLIDAYS.includes(todayStr)) {
-    return { status: "closed", reason: "Rasmiy bayram", secLeft: 86400 - cur + openSec, next: "Keyingi ish kuni" };
+    return { status: "closed", reason: "Rasmiy bayram", secLeft: 86400 - cur + openSec };
   }
-
   if (cur >= openSec && cur < closeSec) {
-    return { status: "open", reason: "Savdo davom etmoqda", secLeft: closeSec - cur, next: "16:00 da yopiladi" };
+    return { status: "open", reason: "Savdo davom etmoqda", secLeft: closeSec - cur };
   }
-
   if (cur < openSec) {
-    return { status: "pending", reason: "Ochilishga tayyor", secLeft: openSec - cur, next: "09:30 da ochiladi" };
+    return { status: "pending", reason: "Ochilishga tayyor", secLeft: openSec - cur };
   }
-
-  const secLeft = 86400 - cur + openSec;
-  return { status: "closed", reason: "Savdo tugagan", secLeft, next: "Ertaga 09:30" };
+  return { status: "closed", reason: "Savdo tugagan", secLeft: 86400 - cur + openSec };
 }
 
 function formatTime(sec) {
   if (sec < 0) sec = 0;
-  const h = Math.floor(sec / 3600);
-  const m = Math.floor((sec % 3600) / 60);
-  const s = sec % 60;
+  const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
   return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 
@@ -502,38 +302,28 @@ function updateMarket() {
   const title = document.getElementById('marketTitle');
   const sub = document.getElementById('marketSub');
   const timer = document.getElementById('marketTimer');
-
   dot.className = 'market-dot ' + info.status;
   timer.className = 'market-timer ' + info.status;
-
-  if (info.status === 'open') {
-    title.textContent = '🟢 BOZOR OCHIQ';
-    sub.textContent = info.reason + ' • Yopilishga:';
-  } else if (info.status === 'pending') {
-    title.textContent = '🟡 OCHILISHGA TAYYOR';
-    sub.textContent = info.reason + ' • Ochilishga:';
-  } else {
-    title.textContent = '🔴 BOZOR YOPIQ';
-    sub.textContent = info.reason + ' • Keyingisiga:';
-  }
+  if (info.status === 'open') { title.textContent = '🟢 BOZOR OCHIQ'; sub.textContent = info.reason; }
+  else if (info.status === 'pending') { title.textContent = '🟡 OCHILISHGA TAYYOR'; sub.textContent = info.reason; }
+  else { title.textContent = '🔴 BOZOR YOPIQ'; sub.textContent = info.reason; }
   timer.textContent = formatTime(info.secLeft);
 }
 setInterval(updateMarket, 1000);
 updateMarket();
 
+// ===== YORDAMCHI =====
 function getHalalTag(h) {
-  if (h === 'halal') return '<span class="tag halal">✅ Halol</span>';
-  if (h === 'haram') return '<span class="tag haram">❌ Harom</span>';
-  if (h === 'ribo') return '<span class="tag ribo">🚫 Ribo</span>';
-  return '<span class="tag shubhali">⚠️ Shubhali</span>';
+  if (h === 'halal') return '<span class="tag halal">✅ HALOL</span>';
+  if (h === 'haram') return '<span class="tag haram">❌ HAROM</span>';
+  if (h === 'ribo') return '<span class="tag ribo">🚫 RIBO</span>';
+  return '<span class="tag shubhali">⚠️ SHUBHALI</span>';
 }
-
 function getAdviceTag(a) {
-  if (a === 'buy') return '<span class="tag advice-buy">🎯 Olish mumkin</span>';
+  if (a === 'buy') return '<span class="tag advice-buy">🎯 Olish</span>';
   if (a === 'wait') return '<span class="tag advice-wait">⚖️ Kutish</span>';
-  return '<span class="tag advice-sell">❌ Olmay turing</span>';
+  return '<span class="tag advice-sell">❌ Olmay</span>';
 }
-
 function getRiskLabel(r) {
   if (r === 'past') return '🟢 Past';
   if (r === 'orta') return '🟡 O\'rta';
@@ -541,24 +331,16 @@ function getRiskLabel(r) {
   return '🔴 Juda baland';
 }
 
-function renderStocks(filter = 'all', query = '') {
+let currentFilter = 'all';
+
+function renderStocks(filter, query) {
   const container = document.getElementById('stocksContainer');
   let list = STOCKS.slice();
-
-  if (query) {
-    const q = query.toLowerCase();
-    list = list.filter(s => s.symbol.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
-  }
-
+  if (query) { const q = query.toLowerCase(); list = list.filter(s => s.symbol.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)); }
   if (filter === 'halal') list = list.filter(s => s.halal === 'halal');
   if (filter === 'buy') list = list.filter(s => s.advice === 'buy');
   if (filter === 'low') list = list.filter(s => s.risk === 'past');
-
-  if (!list.length) {
-    container.innerHTML = '<div class="empty">Hech narsa topilmadi 🔍</div>';
-    return;
-  }
-
+  if (!list.length) { container.innerHTML = '<div class="empty">Hech narsa topilmadi 🔍</div>'; return; }
   container.innerHTML = list.map(s => {
     const cls = s.change >= 0 ? 'up' : 'down';
     const sign = s.change >= 0 ? '+' : '';
@@ -568,26 +350,22 @@ function renderStocks(filter = 'all', query = '') {
           <div><span class="stock-name">${s.name}</span><span class="stock-symbol">${s.symbol}</span></div>
         </div>
         <div class="stock-row2">
-          <div class="stock-price">$${s.price.toFixed(2)}</div>
+          <div class="stock-price">${s.price.toLocaleString()} so'm</div>
           <div class="stock-change ${cls}">${sign}${s.change}%</div>
         </div>
         <div class="stock-tags">
-          ${getHalalTag(s.halal)}
-          ${getAdviceTag(s.advice)}
+          ${getHalalTag(s.halal)} ${getAdviceTag(s.advice)}
           <span class="tag">⚠️ ${getRiskLabel(s.risk)}</span>
         </div>
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
-renderStocks();
+renderStocks('all', '');
 
-let currentFilter = 'all';
-document.getElementById('searchInput').addEventListener('input', (e) => {
+document.getElementById('searchInput').addEventListener('input', e => {
   renderStocks(currentFilter, e.target.value.trim());
 });
-
-document.getElementById('filters').addEventListener('click', (e) => {
+document.getElementById('filters').addEventListener('click', e => {
   const btn = e.target.closest('.filter-btn');
   if (!btn) return;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -596,24 +374,21 @@ document.getElementById('filters').addEventListener('click', (e) => {
   renderStocks(currentFilter, document.getElementById('searchInput').value.trim());
 });
 
+// ===== MODAL =====
 function openStock(symbol) {
   const s = STOCKS.find(x => x.symbol === symbol);
   if (!s) return;
-  const modal = document.getElementById('detailModal');
   document.getElementById('modalTitle').textContent = s.symbol + ' — ' + s.name;
-
   const rng = s.max52 - s.min52;
   const pos = rng > 0 ? Math.round(((s.price - s.min52) / rng) * 100) : 50;
   const cls = s.change >= 0 ? 'up' : 'down';
   const sign = s.change >= 0 ? '+' : '';
-
   let rsiState = 'normal';
   if (s.rsi < 30) rsiState = 'juda arzon 🔥';
   else if (s.rsi < 45) rsiState = 'arzon';
   else if (s.rsi < 55) rsiState = 'normal';
   else if (s.rsi < 70) rsiState = 'qimmat';
   else rsiState = 'juda qimmat ⚠️';
-
   const canBuy = s.halal !== 'haram' && s.halal !== 'ribo';
   const adviceText = canBuy
     ? (s.advice === 'buy' ? '✅ OLISH MUMKIN' : s.advice === 'wait' ? '⚖️ KUTISH' : '❌ OLMAY TURING')
@@ -621,63 +396,45 @@ function openStock(symbol) {
 
   document.getElementById('modalBody').innerHTML = `
     <div class="detail-price">
-      <div class="detail-price-num">$${s.price.toFixed(2)}</div>
+      <div class="detail-price-num">${s.price.toLocaleString()} so'm</div>
       <div class="detail-price-chg ${cls}">${sign}${s.change}%</div>
     </div>
-
     <div class="detail-rows">
       <div class="detail-row"><span class="detail-row-label">💰 Dividend</span><span class="detail-row-value">${s.dividend}%</span></div>
       <div class="detail-row"><span class="detail-row-label">📊 P/E</span><span class="detail-row-value">${s.pe}</span></div>
-      <div class="detail-row"><span class="detail-row-label">📉 52W MIN</span><span class="detail-row-value">$${s.min52}</span></div>
-      <div class="detail-row"><span class="detail-row-label">📈 52W MAX</span><span class="detail-row-value">$${s.max52}</span></div>
+      <div class="detail-row"><span class="detail-row-label">📉 52W MIN</span><span class="detail-row-value">${s.min52.toLocaleString()}</span></div>
+      <div class="detail-row"><span class="detail-row-label">📈 52W MAX</span><span class="detail-row-value">${s.max52.toLocaleString()}</span></div>
       <div class="detail-row"><span class="detail-row-label">📈 RSI</span><span class="detail-row-value">${s.rsi} (${rsiState})</span></div>
     </div>
-
     <div style="margin:16px 0;">
       <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:6px;">
         <span>📍 52W pozitsiyasi</span><span>${pos}%</span>
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:${pos}%"></div></div>
     </div>
-
     <div style="margin:16px 0;">
       <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:6px;">
         <span>📊 Uslash foizi (${s.holdTime})</span><span>${s.holdPercent}%</span>
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:${s.holdPercent}%"></div></div>
     </div>
-
     <div class="detail-rows">
-      <div class="detail-row"><span class="detail-row-label">🕌 Holat</span><span class="detail-row-value">${getHalalTag(s.halal)}</span></div>
-      <div class="detail-row"><span class="detail-row-label">⚠️ Xavf</span><span class="detail-row-value">${getRiskLabel(s.risk)}</span></div>
-      <div class="detail-row"><span class="detail-row-label">⏱ Uslash vaqti (+-1%)</span><span class="detail-row-value">${s.holdTime}</span></div>
+      <div class="detail-row" style="background:rgba(0,255,136,.05);">
+        <span class="detail-row-label" style="color:#00ff88;">🕌 Shariat tekshiruvi (AAOIFI)</span>
+      </div>
+      <div class="detail-row"><span class="detail-row-label">🏭 Asosiy faoliyat</span><span class="detail-row-value">${s.business}</span></div>
+      <div class="detail-row"><span class="detail-row-label">💰 Foizli qarz / qiymat</span><span class="detail-row-value" style="color:${s.debtRatio > 30 ? '#ff3b3b' : s.debtRatio >= 25 ? '#ffbb00' : '#00ff88'};">${s.debtRatio}%</span></div>
+      <div class="detail-row"><span class="detail-row-label">📊 Foizli daromad</span><span class="detail-row-value" style="color:${s.interestIncome > 5 ? '#ff3b3b' : s.interestIncome >= 4 ? '#ffbb00' : '#00ff88'};">${s.interestIncome}%</span></div>
+      <div class="detail-row"><span class="detail-row-label">📝 Xulosa</span><span class="detail-row-value" style="font-size:11px;">${s.halalReason}</span></div>
     </div>
-
     <div style="text-align:center;font-size:16px;font-weight:700;margin-top:20px;color:${canBuy ? '#00ff88' : '#ff3b3b'};">
       ${adviceText}
     </div>
-
-    <button class="action-btn ${canBuy ? '' : 'disabled'}" onclick="${canBuy ? `buyStock('${s.symbol}')` : ''}">
-      ${canBuy ? '🛒 Sotib olish' : '🚫 Sotib olib bo\'lmaydi'}
-    </button>
+    <button class="action-btn ${canBuy ? '' : 'disabled'}">${canBuy ? '🛒 Sotib olish' : '🚫 Sotib olib bo\'lmaydi'}</button>
   `;
-
-  modal.classList.add('open');
+  document.getElementById('detailModal').classList.add('open');
 }
-
-function closeModal() {
-  document.getElementById('detailModal').classList.remove('open');
-}
-
-function buyStock(symbol) {
-  const s = STOCKS.find(x => x.symbol === symbol);
-  if (!s) return;
-  tg?.showPopup({
-    title: "✅ Sotib olindi",
-    message: `${s.name} — $${s.price}`,
-    buttons: [{ type: "ok" }]
-  });
-}
+function closeModal() { document.getElementById('detailModal').classList.remove('open'); }
 </script>
 </body>
 </html>
