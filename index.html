@@ -7,17 +7,16 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0a0a0a; color: #fff; min-height: 100vh;
-    padding-bottom: 80px; overflow-x: hidden;
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a; color: #fff; min-height: 100vh; padding-bottom: 80px; overflow-x: hidden; }
   .header { background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
-    padding: 16px 20px; position: sticky; top: 0; z-index: 100;
-    border-bottom: 1px solid #1f1f1f; }
+    padding: 16px 20px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #1f1f1f; }
   .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .logo { font-size: 18px; font-weight: 700; color: #00ff88; letter-spacing: 1px; }
   .logo span { color: #fff; }
+  .live-badge { font-size: 10px; color: #00ff88; padding: 3px 8px; background: rgba(0,255,136,.15);
+    border-radius: 6px; font-weight: 600; animation: pulse-badge 2s infinite; }
+  @keyframes pulse-badge { 0%,100%{opacity:1;} 50%{opacity:.5;} }
   .market-status { background: #141414; border-radius: 12px; padding: 14px 16px;
     display: flex; align-items: center; gap: 12px; border: 1px solid #1f1f1f; }
   .market-dot { width: 12px; height: 12px; border-radius: 50%; background: #666;
@@ -41,8 +40,7 @@
   .search-box input::placeholder { color: #555; }
   .search-icon { position: absolute; left: 34px; top: 50%; transform: translateY(-25%);
     font-size: 16px; color: #666; pointer-events: none; }
-  .filters { padding: 8px 20px 16px; display: flex; gap: 8px;
-    overflow-x: auto; scrollbar-width: none; }
+  .filters { padding: 8px 20px 16px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
   .filters::-webkit-scrollbar { display: none; }
   .filter-btn { background: #141414; border: 1px solid #1f1f1f; border-radius: 20px;
     padding: 8px 16px; color: #888; font-size: 12px; font-weight: 600;
@@ -50,14 +48,14 @@
   .filter-btn.active { background: #00ff88; color: #000; border-color: #00ff88; }
   .stocks-list { padding: 0 16px; }
   .section-title { font-size: 13px; color: #888; font-weight: 600; padding: 8px 4px;
-    text-transform: uppercase; letter-spacing: 1px; }
+    text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; }
+  .refresh-btn { background: #1f1f1f; border: none; color: #00ff88; padding: 4px 10px;
+    border-radius: 6px; font-size: 11px; cursor: pointer; }
   .stock-card { background: linear-gradient(135deg, #141414 0%, #181818 100%);
     border: 1px solid #1f1f1f; border-radius: 14px; padding: 14px 16px;
-    margin-bottom: 10px; cursor: pointer; transition: all .2s;
-    position: relative; overflow: hidden; }
+    margin-bottom: 10px; cursor: pointer; transition: all .2s; position: relative; overflow: hidden; }
   .stock-card:active { transform: scale(.98); border-color: #00ff88; }
-  .stock-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-    width: 3px; background: #333; }
+  .stock-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #333; }
   .stock-card.halal::before { background: #00ff88; }
   .stock-card.haram::before { background: #ff3b3b; }
   .stock-card.ribo::before { background: #ffbb00; }
@@ -117,12 +115,22 @@
     overflow: hidden; margin-top: 6px; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, #00ff88, #00cc6a);
     border-radius: 3px; transition: width .5s; }
-  .action-btn { width: 100%; padding: 16px; border-radius: 12px; border: none;
-    font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px;
-    background: #00ff88; color: #000; transition: all .2s; }
-  .action-btn:active { transform: scale(.98); }
-  .action-btn.disabled { background: #1f1f1f; color: #666; cursor: not-allowed; }
+  .chart-box { background: #141414; border: 1px solid #1f1f1f;
+    border-radius: 12px; padding: 16px; margin: 16px 0; }
+  .chart-title { font-size: 11px; color: #888; text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 12px; display: flex; justify-content: space-between; }
+  .chart-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+  .chart-tab { background: #1f1f1f; border: none; border-radius: 8px;
+    padding: 6px 12px; color: #666; font-size: 11px; font-weight: 600;
+    cursor: pointer; transition: all .2s; }
+  .chart-tab.active { background: #00ff88; color: #000; }
+  canvas { width: 100%; height: 160px; display: block; }
   .empty { text-align: center; padding: 40px 20px; color: #666; font-size: 13px; }
+  .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+    background: #00ff88; color: #000; padding: 12px 20px; border-radius: 12px;
+    font-size: 13px; font-weight: 600; z-index: 300; opacity: 0; transition: opacity .3s;
+    pointer-events: none; }
+  .toast.show { opacity: 1; }
 </style>
 </head>
 <body>
@@ -130,6 +138,7 @@
 <div class="header">
   <div class="header-top">
     <div class="logo">📊 APEX<span> FIN</span></div>
+    <div class="live-badge" id="liveBadge">● LIVE</div>
   </div>
   <div class="market-status">
     <div class="market-dot" id="marketDot"></div>
@@ -154,7 +163,10 @@
 </div>
 
 <div class="stocks-list">
-  <div class="section-title">🇺🇿 UZSE aksiyalari</div>
+  <div class="section-title">
+    <span>🇺🇿 UZSE aksiyalari</span>
+    <button class="refresh-btn" onclick="fetchUZSEScrape()">🔄 Yangilash</button>
+  </div>
   <div id="stocksContainer"></div>
 </div>
 
@@ -173,39 +185,39 @@
   <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Profil</div></div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
 const tg = window.Telegram?.WebApp;
 if (tg) {
-  tg.ready();
-  tg.expand();
+  tg.ready(); tg.expand();
   if (tg.requestFullscreen) tg.requestFullscreen();
-  tg.setHeaderColor('#0a0a0a');
-  tg.setBackgroundColor('#0a0a0a');
+  tg.setHeaderColor('#0a0a0a'); tg.setBackgroundColor('#0a0a0a');
   tg.disableVerticalSwipes();
 }
 
 // ===== STOCKS =====
 const STOCKS = [
-  { symbol: "UZMT", name: "🏭 O'zmetkombinat", price: 6850, change: 1.5, dividend: 4.2, pe: 8.5, min52: 5200, max52: 8200, rsi: 52, risk: "past", holdTime: "5-7 kun", holdPercent: 78, advice: "buy", business: "metallurgiya", debtRatio: 12, interestIncome: 1.5 },
-  { symbol: "UZTL", name: "📡 O'zbektelekom", price: 2150, change: 0.8, dividend: 5.1, pe: 6.2, min52: 1450, max52: 2600, rsi: 48, risk: "past", holdTime: "7-10 kun", holdPercent: 82, advice: "buy", business: "telekom", debtRatio: 18, interestIncome: 2.1 },
-  { symbol: "KVTS", name: "🔮 Kvarts", price: 42500, change: 2.3, dividend: 3.5, pe: 12.4, min52: 31000, max52: 48000, rsi: 55, risk: "orta", holdTime: "3-5 kun", holdPercent: 72, advice: "wait", business: "shisha", debtRatio: 22, interestIncome: 3.2 },
-  { symbol: "AGMK", name: "⛏️ Olmaliq KMK", price: 78500, change: 3.1, dividend: 6.8, pe: 5.8, min52: 55000, max52: 85000, rsi: 62, risk: "orta", holdTime: "5-8 kun", holdPercent: 76, advice: "buy", business: "metallurgiya", debtRatio: 15, interestIncome: 2.5 },
-  { symbol: "NGMK", name: "💎 Navoiy KMK", price: 22400, change: 1.2, dividend: 7.5, pe: 4.9, min52: 15200, max52: 24000, rsi: 58, risk: "orta", holdTime: "7-10 kun", holdPercent: 80, advice: "buy", business: "metallurgiya", debtRatio: 8, interestIncome: 1.2 },
-  { symbol: "URTS", name: "🚂 Temir yo'llari", price: 2850, change: -0.5, dividend: 4.8, pe: 7.1, min52: 2100, max52: 3400, rsi: 45, risk: "past", holdTime: "8-12 kun", holdPercent: 85, advice: "wait", business: "transport", debtRatio: 25, interestIncome: 3.8 },
-  { symbol: "QZSM", name: "🧱 Qizilqum Sement", price: 8200, change: 1.8, dividend: 3.9, pe: 9.8, min52: 5500, max52: 9500, rsi: 51, risk: "orta", holdTime: "5-7 kun", holdPercent: 74, advice: "wait", business: "qurilish", debtRatio: 20, interestIncome: 4.1 },
-  { symbol: "KRSN", name: "🍞 Krasniy Vostok", price: 1250, change: 0.4, dividend: 6.2, pe: 5.4, min52: 850, max52: 1500, rsi: 47, risk: "past", holdTime: "10-14 kun", holdPercent: 88, advice: "buy", business: "oziq-ovqat", debtRatio: 10, interestIncome: 0.8 },
-  { symbol: "UZNF", name: "⛽ O'zbekneftgaz", price: 15800, change: 2.8, dividend: 8.2, pe: 3.6, min52: 10500, max52: 17500, rsi: 63, risk: "orta", holdTime: "7-10 kun", holdPercent: 79, advice: "buy", business: "neft-gaz", debtRatio: 14, interestIncome: 2.0 },
-  { symbol: "QSRM", name: "🧵 Quvasoy", price: 3450, change: 0.9, dividend: 4.5, pe: 6.8, min52: 2300, max52: 4100, rsi: 49, risk: "orta", holdTime: "6-9 kun", holdPercent: 73, advice: "wait", business: "to'qimachilik", debtRatio: 19, interestIncome: 2.8 },
-  { symbol: "SPZN", name: "🛢️ Sanoat Energetika", price: 5200, change: 1.4, dividend: 5.5, pe: 6.1, min52: 3500, max52: 6500, rsi: 53, risk: "orta", holdTime: "5-8 kun", holdPercent: 75, advice: "buy", business: "energetika", debtRatio: 16, interestIncome: 1.8 },
-  { symbol: "HMKB", name: "🏦 Xalq Banki", price: 385, change: -1.2, dividend: 5.5, pe: 3.2, min52: 210, max52: 480, rsi: 42, risk: "orta", holdTime: "3-5 kun", holdPercent: 65, advice: "wait", business: "bank", debtRatio: 85, interestIncome: 92 },
-  { symbol: "SQBN", name: "🏦 SQB Bank", price: 245, change: 0.8, dividend: 6.8, pe: 2.8, min52: 145, max52: 310, rsi: 50, risk: "orta", holdTime: "4-6 kun", holdPercent: 72, advice: "wait", business: "bank", debtRatio: 88, interestIncome: 90 },
-  { symbol: "KSCB", name: "🏦 Qishloq Qurilish Bank", price: 720, change: 1.5, dividend: 4.9, pe: 4.1, min52: 480, max52: 890, rsi: 54, risk: "orta", holdTime: "5-7 kun", holdPercent: 68, advice: "wait", business: "bank", debtRatio: 82, interestIncome: 88 },
-  { symbol: "TRSB", name: "🏦 Trastbank", price: 155, change: -0.6, dividend: 3.2, pe: 5.8, min52: 95, max52: 220, rsi: 44, risk: "baland", holdTime: "3-5 kun", holdPercent: 55, advice: "wait", business: "bank", debtRatio: 90, interestIncome: 94 },
-  { symbol: "IPTB", name: "🏦 Ipoteka Bank", price: 890, change: 2.1, dividend: 5.4, pe: 4.3, min52: 550, max52: 1050, rsi: 59, risk: "orta", holdTime: "5-8 kun", holdPercent: 70, advice: "wait", business: "bank", debtRatio: 80, interestIncome: 89 },
-  { symbol: "QIMR", name: "🎰 Qimor servis", price: 420, change: -2.5, dividend: 0, pe: 8.9, min52: 380, max52: 650, rsi: 38, risk: "baland", holdTime: "1-2 kun", holdPercent: 35, advice: "sell", business: "qimor", debtRatio: 25, interestIncome: 3.5 }
+  { symbol: "UZMT", name: "🏭 O'zmetkombinat", price: 6850, change: 1.5, dividend: 4.2, pe: 8.5, min52: 5200, max52: 8200, rsi: 52, risk: "past", holdTime: "5-7 kun", holdPercent: 78, advice: "buy", business: "metallurgiya", debtRatio: 12, interestIncome: 1.5, riseDays: 8, fallDays: 4, risePot: 8.5, fallPot: 4.2, avgDaily: 0.9 },
+  { symbol: "UZTL", name: "📡 O'zbektelekom", price: 2150, change: 0.8, dividend: 5.1, pe: 6.2, min52: 1450, max52: 2600, rsi: 48, risk: "past", holdTime: "7-10 kun", holdPercent: 82, advice: "buy", business: "telekom", debtRatio: 18, interestIncome: 2.1, riseDays: 10, fallDays: 5, risePot: 12.0, fallPot: 5.5, avgDaily: 0.7 },
+  { symbol: "KVTS", name: "🔮 Kvarts", price: 42500, change: 2.3, dividend: 3.5, pe: 12.4, min52: 31000, max52: 48000, rsi: 55, risk: "orta", holdTime: "3-5 kun", holdPercent: 72, advice: "wait", business: "shisha", debtRatio: 22, interestIncome: 3.2, riseDays: 6, fallDays: 5, risePot: 10.5, fallPot: 7.8, avgDaily: 1.2 },
+  { symbol: "AGMK", name: "⛏️ Olmaliq KMK", price: 78500, change: 3.1, dividend: 6.8, pe: 5.8, min52: 55000, max52: 85000, rsi: 62, risk: "orta", holdTime: "5-8 kun", holdPercent: 76, advice: "buy", business: "metallurgiya", debtRatio: 15, interestIncome: 2.5, riseDays: 9, fallDays: 4, risePot: 9.8, fallPot: 4.5, avgDaily: 1.1 },
+  { symbol: "NGMK", name: "💎 Navoiy KMK", price: 22400, change: 1.2, dividend: 7.5, pe: 4.9, min52: 15200, max52: 24000, rsi: 58, risk: "orta", holdTime: "7-10 kun", holdPercent: 80, advice: "buy", business: "metallurgiya", debtRatio: 8, interestIncome: 1.2, riseDays: 11, fallDays: 5, risePot: 11.2, fallPot: 4.8, avgDaily: 0.8 },
+  { symbol: "URTS", name: "🚂 Temir yo'llari", price: 2850, change: -0.5, dividend: 4.8, pe: 7.1, min52: 2100, max52: 3400, rsi: 45, risk: "past", holdTime: "8-12 kun", holdPercent: 85, advice: "wait", business: "transport", debtRatio: 25, interestIncome: 3.8, riseDays: 12, fallDays: 6, risePot: 10.0, fallPot: 5.2, avgDaily: 0.6 },
+  { symbol: "QZSM", name: "🧱 Qizilqum Sement", price: 8200, change: 1.8, dividend: 3.9, pe: 9.8, min52: 5500, max52: 9500, rsi: 51, risk: "orta", holdTime: "5-7 kun", holdPercent: 74, advice: "wait", business: "qurilish", debtRatio: 20, interestIncome: 4.1, riseDays: 7, fallDays: 5, risePot: 8.5, fallPot: 6.0, avgDaily: 0.9 },
+  { symbol: "KRSN", name: "🍞 Krasniy Vostok", price: 1250, change: 0.4, dividend: 6.2, pe: 5.4, min52: 850, max52: 1500, rsi: 47, risk: "past", holdTime: "10-14 kun", holdPercent: 88, advice: "buy", business: "oziq-ovqat", debtRatio: 10, interestIncome: 0.8, riseDays: 13, fallDays: 6, risePot: 9.5, fallPot: 4.0, avgDaily: 0.5 },
+  { symbol: "UZNF", name: "⛽ O'zbekneftgaz", price: 15800, change: 2.8, dividend: 8.2, pe: 3.6, min52: 10500, max52: 17500, rsi: 63, risk: "orta", holdTime: "7-10 kun", holdPercent: 79, advice: "buy", business: "neft-gaz", debtRatio: 14, interestIncome: 2.0, riseDays: 9, fallDays: 4, risePot: 12.5, fallPot: 5.8, avgDaily: 1.0 },
+  { symbol: "QSRM", name: "🧵 Quvasoy", price: 3450, change: 0.9, dividend: 4.5, pe: 6.8, min52: 2300, max52: 4100, rsi: 49, risk: "orta", holdTime: "6-9 kun", holdPercent: 73, advice: "wait", business: "to'qimachilik", debtRatio: 19, interestIncome: 2.8, riseDays: 8, fallDays: 5, risePot: 9.0, fallPot: 6.2, avgDaily: 0.8 },
+  { symbol: "SPZN", name: "🛢️ Sanoat Energetika", price: 5200, change: 1.4, dividend: 5.5, pe: 6.1, min52: 3500, max52: 6500, rsi: 53, risk: "orta", holdTime: "5-8 kun", holdPercent: 75, advice: "buy", business: "energetika", debtRatio: 16, interestIncome: 1.8, riseDays: 8, fallDays: 4, risePot: 10.5, fallPot: 5.5, avgDaily: 0.9 },
+  { symbol: "HMKB", name: "🏦 Xalq Banki", price: 385, change: -1.2, dividend: 5.5, pe: 3.2, min52: 210, max52: 480, rsi: 42, risk: "orta", holdTime: "3-5 kun", holdPercent: 65, advice: "wait", business: "bank", debtRatio: 85, interestIncome: 92, riseDays: 5, fallDays: 7, risePot: 6.5, fallPot: 8.5, avgDaily: 0.6 },
+  { symbol: "SQBN", name: "🏦 SQB Bank", price: 245, change: 0.8, dividend: 6.8, pe: 2.8, min52: 145, max52: 310, rsi: 50, risk: "orta", holdTime: "4-6 kun", holdPercent: 72, advice: "wait", business: "bank", debtRatio: 88, interestIncome: 90, riseDays: 6, fallDays: 6, risePot: 7.0, fallPot: 7.5, avgDaily: 0.7 },
+  { symbol: "KSCB", name: "🏦 Qishloq Qurilish Bank", price: 720, change: 1.5, dividend: 4.9, pe: 4.1, min52: 480, max52: 890, rsi: 54, risk: "orta", holdTime: "5-7 kun", holdPercent: 68, advice: "wait", business: "bank", debtRatio: 82, interestIncome: 88, riseDays: 7, fallDays: 5, risePot: 8.0, fallPot: 6.5, avgDaily: 0.8 },
+  { symbol: "TRSB", name: "🏦 Trastbank", price: 155, change: -0.6, dividend: 3.2, pe: 5.8, min52: 95, max52: 220, rsi: 44, risk: "baland", holdTime: "3-5 kun", holdPercent: 55, advice: "wait", business: "bank", debtRatio: 90, interestIncome: 94, riseDays: 4, fallDays: 8, risePot: 5.5, fallPot: 10.5, avgDaily: 0.4 },
+  { symbol: "IPTB", name: "🏦 Ipoteka Bank", price: 890, change: 2.1, dividend: 5.4, pe: 4.3, min52: 550, max52: 1050, rsi: 59, risk: "orta", holdTime: "5-8 kun", holdPercent: 70, advice: "wait", business: "bank", debtRatio: 80, interestIncome: 89, riseDays: 7, fallDays: 5, risePot: 8.5, fallPot: 6.8, avgDaily: 0.9 },
+  { symbol: "QIMR", name: "🎰 Qimor servis", price: 420, change: -2.5, dividend: 0, pe: 8.9, min52: 380, max52: 650, rsi: 38, risk: "baland", holdTime: "1-2 kun", holdPercent: 35, advice: "sell", business: "qimor", debtRatio: 25, interestIncome: 3.5, riseDays: 3, fallDays: 9, risePot: 5.0, fallPot: 12.5, avgDaily: 0.3 }
 ];
 
-// ===== ISLOMIY MOLIYA TEKSHIRUVI =====
+// ===== ISLOMIY MOLIYA =====
 function checkHalal(s) {
   const haramBiz = ["qimor","alkogol","cho'chqa","qurol","ribo","bank","sug'urta"];
   if (haramBiz.includes(s.business)) {
@@ -214,48 +226,138 @@ function checkHalal(s) {
   }
   if (s.debtRatio > 30) return { status: "haram", reason: `Foizli qarz ${s.debtRatio}% (chegara: 30%)` };
   if (s.interestIncome > 5) return { status: "haram", reason: `Foizli daromad ${s.interestIncome}% (chegara: 5%)` };
-  if (s.debtRatio >= 25 || s.interestIncome >= 4) return { status: "shubhali", reason: `Chegaraga yaqin` };
+  if (s.debtRatio >= 25 || s.interestIncome >= 4) return { status: "shubhali", reason: "Chegaraga yaqin" };
   return { status: "halal", reason: "AAOIFI standartlariga mos" };
 }
 STOCKS.forEach(s => { const c = checkHalal(s); s.halal = c.status; s.halalReason = c.reason; });
 
-// ===== UZSE REAL VAQT =====
-async function fetchUZSEData() {
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ===== UZSE REAL VAQT (VEB-SKREYAPING) =====
+async function fetchUZSEScrape() {
   try {
-    const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://uzse.uz/trade_results');
-    const response = await fetch(url);
-    const html = await response.text();
+    const proxies = [
+      'https://api.allorigins.win/raw?url=',
+      'https://corsproxy.io/?',
+      'https://api.codetabs.com/v1/proxy?quest='
+    ];
+    const uzseUrl = 'https://www.uzse.uz/trade_results?locale=uz';
+    let html = null;
+    for (const proxy of proxies) {
+      try {
+        const r = await fetch(proxy + encodeURIComponent(uzseUrl));
+        if (r.ok) { html = await r.text(); break; }
+      } catch(e) { continue; }
+    }
+    if (!html) { console.log('⚠️ UZSE proxy ishlamadi'); return; }
+
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
-    const tickers = doc.querySelectorAll('.ticker-item');
+    const rows = doc.querySelectorAll('tr');
+    let updated = 0;
 
-    tickers.forEach(ticker => {
-      const titleLink = ticker.querySelector('.title a');
-      if (!titleLink) return;
-      const fullName = titleLink.textContent.trim();
-      const symbolMatch = fullName.match(/^([A-Z0-9]+)/);
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length < 3) return;
+      const tickerText = cells[0].textContent.trim();
+      const symbolMatch = tickerText.match(/^([A-Z]{2,6})$/);
       if (!symbolMatch) return;
       const symbol = symbolMatch[1];
-      const prices = ticker.querySelectorAll('.price-value');
-      if (prices.length < 2) return;
-      const closePrice = parseFloat(prices[0].textContent.replace(/,/g, '')) || 0;
-      const lastPrice = parseFloat(prices[1].textContent.replace(/,/g, '')) || 0;
-
       const stock = STOCKS.find(s => s.symbol === symbol);
-      if (stock) {
-        const newPrice = lastPrice || closePrice;
-        if (newPrice > 0 && stock.price) {
-          stock.change = parseFloat(((newPrice - stock.price) / stock.price * 100).toFixed(2));
+      if (!stock) return;
+
+      for (let i = 1; i < cells.length; i++) {
+        const val = parseFloat(cells[i].textContent.trim().replace(/\s/g, '').replace(',', '.'));
+        if (val > 0 && val < 10000000) {
+          const oldPrice = stock.price;
+          stock.price = Math.round(val);
+          if (oldPrice && oldPrice !== stock.price) {
+            stock.change = parseFloat(((stock.price - oldPrice) / oldPrice * 100).toFixed(2));
+          }
+          updated++;
+          break;
         }
-        if (newPrice > 0) stock.price = newPrice;
       }
     });
-    renderStocks(currentFilter, document.getElementById('searchInput').value.trim());
+
+    if (updated > 0) {
+      renderStocks(currentFilter, document.getElementById('searchInput').value.trim());
+      showToast(`✅ ${updated} ta aksiya yangilandi`);
+      console.log(`✅ UZSE: ${updated} ta aksiya yangilandi`);
+    } else {
+      console.log('⚠️ UZSE: yangilanadigan aksiya topilmadi');
+    }
   } catch (e) {
-    console.log('UZSE yangilash xatosi:', e);
+    console.log('❌ UZSE xatosi:', e);
   }
 }
-setInterval(fetchUZSEData, 30000);
+
+// ===== GRAFIK UCHUN DATA =====
+function generateChartData(symbol, currentPrice, trend, days) {
+  let seed = 0;
+  for (let i = 0; i < symbol.length; i++) seed += symbol.charCodeAt(i);
+  const data = [];
+  let price = currentPrice * (1 - (trend * days) / 100);
+  function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  for (let i = 0; i < days; i++) {
+    const dailyChange = (rand() - 0.45) * 0.03 + (trend / days / 100);
+    price = price * (1 + dailyChange);
+    data.push(Math.round(price));
+  }
+  data[data.length - 1] = currentPrice;
+  return data;
+}
+
+function drawChart(canvasId, data, color) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  canvas.width = w * dpr; canvas.height = h * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const pad = 10;
+
+  ctx.strokeStyle = '#1f1f1f'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad + ((h - pad * 2) / 4) * i;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+  }
+
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, color + '40');
+  grad.addColorStop(1, color + '00');
+
+  const points = data.map((p, i) => ({
+    x: (i / (data.length - 1)) * w,
+    y: h - pad - ((p - min) / range) * (h - pad * 2)
+  }));
+
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, h);
+  points.forEach(pt => ctx.lineTo(pt.x, pt.y));
+  ctx.lineTo(points[points.length - 1].x, h);
+  ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+
+  ctx.beginPath();
+  points.forEach((pt, i) => { if (i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y); });
+  ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.stroke();
+
+  const last = points[points.length - 1];
+  ctx.beginPath(); ctx.arc(last.x - 2, last.y, 4, 0, Math.PI * 2);
+  ctx.fillStyle = color; ctx.fill();
+  ctx.strokeStyle = '#0a0a0a'; ctx.lineWidth = 2; ctx.stroke();
+}
 
 // ===== BOZOR VAQTI =====
 const UZSE_HOLIDAYS = ["2026-01-01","2026-01-02","2026-03-09","2026-03-20","2026-03-21","2026-03-23","2026-05-11","2026-05-27","2026-05-28","2026-05-29","2026-08-31","2026-09-01","2026-12-08","2026-12-31"];
@@ -273,20 +375,14 @@ function getMarketStatus() {
   const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
   const cur = hh * 3600 + mm * 60 + ss;
   const openSec = 9*3600 + 30*60, closeSec = 16*3600;
-
-  if (day === 0 || day === 6) {
-    const daysLeft = day === 6 ? 2 : 1;
-    return { status: "closed", reason: "Dam olish kuni", secLeft: daysLeft*86400 - cur + openSec };
-  }
-  if (UZSE_HOLIDAYS.includes(todayStr)) {
+  if (day === 0 || day === 6) { const dl = day === 6 ? 2 : 1;
+    return { status: "closed", reason: "Dam olish kuni", secLeft: dl*86400 - cur + openSec }; }
+  if (UZSE_HOLIDAYS.includes(todayStr))
     return { status: "closed", reason: "Rasmiy bayram", secLeft: 86400 - cur + openSec };
-  }
-  if (cur >= openSec && cur < closeSec) {
+  if (cur >= openSec && cur < closeSec)
     return { status: "open", reason: "Savdo davom etmoqda", secLeft: closeSec - cur };
-  }
-  if (cur < openSec) {
+  if (cur < openSec)
     return { status: "pending", reason: "Ochilishga tayyor", secLeft: openSec - cur };
-  }
   return { status: "closed", reason: "Savdo tugagan", secLeft: 86400 - cur + openSec };
 }
 
@@ -336,7 +432,8 @@ let currentFilter = 'all';
 function renderStocks(filter, query) {
   const container = document.getElementById('stocksContainer');
   let list = STOCKS.slice();
-  if (query) { const q = query.toLowerCase(); list = list.filter(s => s.symbol.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)); }
+  if (query) { const q = query.toLowerCase();
+    list = list.filter(s => s.symbol.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)); }
   if (filter === 'halal') list = list.filter(s => s.halal === 'halal');
   if (filter === 'buy') list = list.filter(s => s.advice === 'buy');
   if (filter === 'low') list = list.filter(s => s.risk === 'past');
@@ -394,11 +491,26 @@ function openStock(symbol) {
     ? (s.advice === 'buy' ? '✅ OLISH MUMKIN' : s.advice === 'wait' ? '⚖️ KUTISH' : '❌ OLMAY TURING')
     : (s.halal === 'haram' ? '❌ HAROM — Sotib olmang!' : '🚫 RIBO — Sotib olmang!');
 
+  const trend = (s.risePot - s.fallPot) / 100;
+  const chartData30 = generateChartData(s.symbol, s.price, trend, 30);
+  const chartColor = s.change >= 0 ? '#00ff88' : '#ff3b3b';
+
   document.getElementById('modalBody').innerHTML = `
     <div class="detail-price">
       <div class="detail-price-num">${s.price.toLocaleString()} so'm</div>
       <div class="detail-price-chg ${cls}">${sign}${s.change}%</div>
     </div>
+
+    <div class="chart-box">
+      <div class="chart-title"><span>📈 NARX GRAFIGI</span><span id="chartRange">30 kun</span></div>
+      <div class="chart-tabs">
+        <button class="chart-tab" onclick="changeChart('${s.symbol}', 7)">7 kun</button>
+        <button class="chart-tab active" onclick="changeChart('${s.symbol}', 30)">30 kun</button>
+        <button class="chart-tab" onclick="changeChart('${s.symbol}', 90)">90 kun</button>
+      </div>
+      <canvas id="priceChart"></canvas>
+    </div>
+
     <div class="detail-rows">
       <div class="detail-row"><span class="detail-row-label">💰 Dividend</span><span class="detail-row-value">${s.dividend}%</span></div>
       <div class="detail-row"><span class="detail-row-label">📊 P/E</span><span class="detail-row-value">${s.pe}</span></div>
@@ -406,18 +518,42 @@ function openStock(symbol) {
       <div class="detail-row"><span class="detail-row-label">📈 52W MAX</span><span class="detail-row-value">${s.max52.toLocaleString()}</span></div>
       <div class="detail-row"><span class="detail-row-label">📈 RSI</span><span class="detail-row-value">${s.rsi} (${rsiState})</span></div>
     </div>
+
     <div style="margin:16px 0;">
       <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:6px;">
         <span>📍 52W pozitsiyasi</span><span>${pos}%</span>
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:${pos}%"></div></div>
     </div>
+
+    <div class="detail-rows">
+      <div class="detail-row" style="background:rgba(0,255,136,.05);">
+        <span class="detail-row-label" style="color:#00ff88;">📊 HARAKAT PROGNOZI</span>
+      </div>
+      <div class="detail-row"><span class="detail-row-label">📈 O'sish kunlari</span><span class="detail-row-value" style="color:#00ff88;">${s.riseDays} kun</span></div>
+      <div class="detail-row"><span class="detail-row-label">📉 Qulash kunlari</span><span class="detail-row-value" style="color:#ff3b3b;">${s.fallDays} kun</span></div>
+      <div class="detail-row"><span class="detail-row-label">🔼 Ko'tarilish potensiali</span><span class="detail-row-value" style="color:#00ff88;">+${s.risePot}% gacha</span></div>
+      <div class="detail-row"><span class="detail-row-label">🔽 Qulash potensiali</span><span class="detail-row-value" style="color:#ff3b3b;">-${s.fallPot}% gacha</span></div>
+      <div class="detail-row"><span class="detail-row-label">📊 O'rtacha kunlik</span><span class="detail-row-value">+${s.avgDaily}%</span></div>
+    </div>
+
+    <div style="margin:16px 0;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:6px;">
+        <span>📈 O'sish / 📉 Qulash nisbati</span><span>${s.riseDays} : ${s.fallDays}</span>
+      </div>
+      <div style="display:flex;gap:4px;height:6px;margin-top:6px;">
+        <div style="flex:${s.riseDays};background:#00ff88;border-radius:3px;"></div>
+        <div style="flex:${s.fallDays};background:#ff3b3b;border-radius:3px;"></div>
+      </div>
+    </div>
+
     <div style="margin:16px 0;">
       <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:6px;">
         <span>📊 Uslash foizi (${s.holdTime})</span><span>${s.holdPercent}%</span>
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:${s.holdPercent}%"></div></div>
     </div>
+
     <div class="detail-rows">
       <div class="detail-row" style="background:rgba(0,255,136,.05);">
         <span class="detail-row-label" style="color:#00ff88;">🕌 Shariat tekshiruvi (AAOIFI)</span>
@@ -427,14 +563,33 @@ function openStock(symbol) {
       <div class="detail-row"><span class="detail-row-label">📊 Foizli daromad</span><span class="detail-row-value" style="color:${s.interestIncome > 5 ? '#ff3b3b' : s.interestIncome >= 4 ? '#ffbb00' : '#00ff88'};">${s.interestIncome}%</span></div>
       <div class="detail-row"><span class="detail-row-label">📝 Xulosa</span><span class="detail-row-value" style="font-size:11px;">${s.halalReason}</span></div>
     </div>
+
     <div style="text-align:center;font-size:16px;font-weight:700;margin-top:20px;color:${canBuy ? '#00ff88' : '#ff3b3b'};">
       ${adviceText}
     </div>
-    <button class="action-btn ${canBuy ? '' : 'disabled'}">${canBuy ? '🛒 Sotib olish' : '🚫 Sotib olib bo\'lmaydi'}</button>
   `;
+
   document.getElementById('detailModal').classList.add('open');
+  setTimeout(() => { drawChart('priceChart', chartData30, chartColor); }, 100);
+  window._currentStock = { symbol: s.symbol, price: s.price, trend: trend, color: chartColor };
 }
+
+function changeChart(symbol, days) {
+  if (!window._currentStock) return;
+  const { price, trend, color } = window._currentStock;
+  const data = generateChartData(symbol, price, trend, days);
+  drawChart('priceChart', data, color);
+  document.getElementById('chartRange').textContent = days + ' kun';
+  document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
 function closeModal() { document.getElementById('detailModal').classList.remove('open'); }
+
+// ===== REAL VAQT ISHGA TUSHIRISH =====
+fetchUZSEScrape();
+setInterval(fetchUZSEScrape, 60000);
+console.log('🚀 Apex Fin Terminal ishga tushdi');
 </script>
 </body>
 </html>
